@@ -20,6 +20,7 @@ DNS解析域名→返回IP→HTTP请求→Web Server返回HTML/JSON
 
 ## 垂直 vs 水平扩展
 - 垂直：加CPU/RAM，有硬件上限，有单点故障
+  - 例：Amazon RDS 最高 24TB RAM；StackOverflow 2013年 1000万月活仅用 1台 Master DB
 - 水平：加机器，无上限，有冗余
 
 ---
@@ -60,7 +61,7 @@ DNS解析域名→返回IP→HTTP请求→Web Server返回HTML/JSON
 
 ## 无状态 Web 层
 - 有状态问题：Session存在某台Server上，必须Sticky Session，难扩展
-- 无状态方案：Session存**共享存储**（Redis/NoSQL），任意Server可处理任意请求，支持Auto-scaling
+- 无状态方案：Session存**共享存储**（Redis/NoSQL，优先 NoSQL 因为易于扩展），任意Server可处理任意请求，支持Auto-scaling
 
 ---
 
@@ -98,6 +99,8 @@ Producer → [Queue] → Consumer，异步解耦
 | 跨Shard无法JOIN | 反范式化（数据冗余） |
 
 选Sharding Key核心标准：**数据分布均匀**
+
+分片后部分非关系型功能可迁移到 NoSQL，进一步减轻关系型 DB 负载
 
 ---
 
