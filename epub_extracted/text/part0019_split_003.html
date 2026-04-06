@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css"/>
+    <meta name="generator" content="Amazon.com"/>
+    <title>Unknown</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link rel="stylesheet" type="text/css" href="../stylesheet.css"/>
+<link rel="stylesheet" type="text/css" href="../page_styles.css"/>
+</head>
+  <body class="calibre">
+<div class="calibre1">
+<h2 class="calibre14" id="calibre_pb_3"> <span class="calibre3">Step 3 - Design deep dive</span> </h2> 
+   <p class="calibre4"> <span class="calibre5">In the high-level design, we discussed various options to design a unique ID generator in distributed systems. We settle on an approach that is based on the Twitter snowflake ID generator. Let us dive deep into the design. To refresh our memory, the design diagram is relisted below.</span> </p> 
+   <p class="calibre15"> <img src="../images/00097.jpeg" alt="A screenshot of a cell phone  Description automatically generated" class="calibre16"/> </p> 
+   <p class="calibre4"> <a id="_3z7bk57"></a><span class="calibre5">Datacenter IDs and machine IDs are chosen at the startup time, generally fixed once the system is up running. Any changes in datacenter IDs and machine IDs require careful review since an accidental change in those values can lead to ID conflicts. Timestamp and sequence numbers are generated when the ID generator is running. </span> </p> 
+   <p class="calibre6"> <span class="calibre3">Timestamp </span> </p> 
+   <p class="calibre4"> <span class="calibre5">The most important 41 bits make up the timestamp section. As timestamps grow with time, IDs are sortable by time. Figure 7-7 shows an example of how binary representation is converted to UTC. You can also convert UTC back to binary representation using a similar method. </span> </p> 
+   <p class="calibre4"> <img src="../images/00098.jpeg" alt="A screenshot of a cell phone  Description automatically generated" class="calibre16"/> </p> 
+   <p class="calibre4"> <span class="calibre5">The maximum timestamp that can be represented in 41 bits is </span> </p> 
+   <p class="calibre4"> <span class="calibre18">2 ^ 41 - 1 = 2199023255551</span><span class="calibre5"> milliseconds (ms), which gives us: ~ 69 years = </span> </p> 
+   <p class="calibre4"> <span class="calibre18">2199023255551 ms / 1000 seconds / 365 days / 24 hours/ 3600 seconds</span><span class="calibre5">. This means the ID generator will work for 69 years and having a custom epoch time close to today’s date delays the overflow time. After 69 years, we will need a new epoch time or adopt other techniques to migrate IDs.</span> </p> 
+   <p class="calibre6"> <span class="calibre3">Sequence number</span> </p> 
+   <p class="calibre4"> <span class="calibre5">Sequence number is 12 bits, which give us 2 ^ 12 = 4096 combinations. This field is 0 unless more than one ID is generated in a millisecond on the same server. In theory, a machine can support a maximum of 4096 new IDs per millisecond.</span><a id="_kfmujb46zmk5"></a> </p> 
+   </div>
+ </body></html>

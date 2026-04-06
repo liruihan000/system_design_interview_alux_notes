@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css"/>
+    <meta name="generator" content="Amazon.com"/>
+    <title>Unknown</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link rel="stylesheet" type="text/css" href="../stylesheet.css"/>
+<link rel="stylesheet" type="text/css" href="../page_styles.css"/>
+</head>
+  <body class="calibre">
+<div class="calibre1">
+<h2 class="calibre14" id="calibre_pb_2"> <span class="calibre3">Step 2 - Propose high-level design and get buy-in</span> </h2> 
+   <p class="calibre4"> <span class="calibre5">Instead of showing the high-level design diagram from the beginning, we will use a slightly different approach. We will start with something simple: build everything in a single server. Then, gradually scale it up to support millions of users. By doing this exercise, it will refresh your memory about some important topics covered in the book.</span> </p> 
+   <p class="calibre6"> <span class="calibre5">Let us start with a single server setup as listed below:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">A web server to upload and download files.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">A database to keep track of metadata like user data, login info, files info, etc.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">A storage system to store files. We allocate 1TB of storage space to store files.</span> </p> 
+   <p class="calibre4"> <span class="calibre5">We spend a few hours setting up an Apache web server, a MySql database, and a directory called </span><span class="calibre18">drive/</span><span class="calibre5"> as the root directory to store uploaded files. Under </span><span class="calibre18">drive/</span><span class="calibre5"> directory, there is a list of directories, known as namespaces. Each namespace contains all the uploaded files for that user. The filename on the server is kept the same as the original file name. Each file or folder can be uniquely identified by joining the namespace and the relative path.               </span> </p> 
+   <p class="calibre4"> <span class="calibre5">Figure 15-3 shows an example of how the </span><span class="calibre18">/drive</span><span class="calibre5"> directory looks like on the left side and its expanded view on the right side.</span> </p> 
+   <p class="calibre15"> <img src="../images/00214.jpeg" alt="A screenshot of a cell phone  Description automatically generated" class="calibre179"/> </p> 
+   <h3 class="calibre20"> <span class="calibre3">APIs</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">What do the APIs look like? We primary need 3 APIs: upload a file, download a file, and get file revisions.</span> </p> 
+   <p class="calibre6"> <span class="calibre3">1. Upload a file to Google Drive </span> </p> 
+   <p class="calibre6"> <span class="calibre32">Two types of uploads are supported:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Simple upload. Use this upload type when the file size is small.</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Resumable upload. Use this upload type when the file size is large and there is high chance of network interruption. </span> </p> 
+   <p class="calibre6"> <span class="calibre5">Here is an example of resumable upload API:</span> </p> 
+   <p class="calibre4"> <span class="calibre18">https://api.example.com/files/upload?uploadType=resumable</span> </p> 
+   <p class="calibre41"> <span class="calibre5">Params:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">uploadType=resumable</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">data: Local file to be uploaded.</span> </p> 
+   <p class="calibre6"> <span class="calibre5">A resumable upload is achieved by the following 3 steps [2]:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Send the initial request to retrieve the resumable URL.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Upload the data and monitor upload state.</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">If upload is disturbed, resume the upload.</span> </p> 
+   <p class="calibre6"> <span class="calibre3">2. Download a file from Google Drive</span> </p> 
+   <p class="calibre4"> <span class="calibre5">Example API: https://api.example.com/files/download</span> </p> 
+   <p class="calibre41"> <span class="calibre5">Params:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">path: download file path.</span> </p> 
+   <p class="calibre41"> <span class="calibre5">Example params:</span> </p> 
+   <p class="calibre41"> <span class="calibre5">{</span> </p> 
+   <p class="calibre9"> <span class="calibre5">"path": "/recipes/soup/best_soup.txt"</span> </p> 
+   <p class="calibre4"> <span class="calibre5">}</span> </p> 
+   <p class="calibre6"> <span class="calibre3">3. Get file revisions </span> </p> 
+   <p class="calibre4"> <span class="calibre5">Example API: https://api.example.com/files/list_revisions</span> </p> 
+   <p class="calibre41"> <span class="calibre5">Params:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">path: The path to the file you want to get the revision history.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">limit: The maximum number of revisions to return.</span> </p> 
+   <p class="calibre41"> <span class="calibre5">Example params:</span> </p> 
+   <p class="calibre41"> <span class="calibre5">{</span> </p> 
+   <p class="calibre9"> <span class="calibre5">"path": "/recipes/soup/best_soup.txt",</span> </p> 
+   <p class="calibre9"> <span class="calibre5">"limit": 20</span> </p> 
+   <p class="calibre4"> <span class="calibre5">}</span> </p> 
+   <p class="calibre4"> <span class="calibre5">All the APIs require user authentication and use HTTPS. Secure Sockets Layer (SSL) protects data transfer between the client and backend servers.</span> </p> 
+   <h3 class="calibre20"> <span class="calibre3">Move away from single server</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">As more files are uploaded, eventually you get the space full alert as shown in Figure 15-4. </span> </p> 
+   <p class="calibre15"> <img src="../images/00215.jpeg" alt="A picture containing table  Description automatically generated" class="calibre180"/> </p> 
+   <p class="calibre4"> <span class="calibre5">Only 10 MB of storage space is left! This is an emergency as users cannot upload files anymore. The first solution comes to mind is to shard the data, so it is stored on multiple storage servers. Figure 15-5 shows an example of sharding based on </span><span class="calibre18">user_i</span><span class="calibre63">d</span><span class="calibre5">.</span> </p> 
+   <p class="calibre15"> <img src="../images/00216.jpeg" alt="A screenshot of a cell phone  Description automatically generated" class="calibre181"/> </p> 
+   <p class="calibre4"> <span class="calibre5">You pull an all-nighter to set up database sharding and monitor it closely. Everything works smoothly again. You have stopped the fire, but you are still worried about potential data losses in case of storage server outage. You ask around and your backend guru friend Frank told you that many leading companies like Netflix and Airbnb use Amazon S3 for storage. “Amazon Simple Storage Service (Amazon S3) is an object storage service that offers industry-leading scalability, data availability, security, and performance” [3]. You decide to do some research to see if it is a good fit. </span> </p> 
+   <p class="calibre4"> <span class="calibre5">After a lot of reading, you gain a good understanding of the S3 storage system and decide to store files in S3. Amazon S3 supports same-region and cross-region replication. A region is a geographic area where Amazon web services (AWS) have data centers. As shown in Figure 15-6, data can be replicated on the same-region (left side) and cross-region (right side). Redundant files are stored in multiple regions to guard against data loss and ensure availability. A bucket is like a folder in file systems.</span> </p> 
+   <p class="calibre15"> <img src="../images/00217.jpeg" alt="A close up of text on a white background  Description automatically generated" class="calibre16"/> </p> 
+   <p class="calibre6"> <span class="calibre5">After putting files in S3, you can finally have a good night's sleep without worrying about data losses. To stop similar problems from happening in the future, you decide to do further research on areas you can improve. Here are a few areas you find:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Load balancer: Add a load balancer to distribute network traffic. A load balancer ensures evenly distributed traffic, and if a web server goes down, it will redistribute the traffic. </span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Web servers: After a load balancer is added, more web servers can be added/removed easily, depending on the traffic load.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Metadata database: Move the database out of the server to avoid single point of failure. In the meantime, set up data replication and sharding to meet the availability and scalability requirements.</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">File storage: Amazon S3 is used for file storage. To ensure availability and durability, files are replicated in two separate geographical regions.</span> </p> 
+   <p class="calibre4"> <span class="calibre5">After applying the above improvements, you have successfully decoupled web servers, metadata database, and file storage from a single server. The updated design is shown in Figure 15-7.</span> </p> 
+   <p class="calibre15"> <img src="../images/00218.jpeg" alt="A close up of a map  Description automatically generated" class="calibre182"/> </p> 
+   <h3 class="calibre20"> <a id="_80cvsky909ag"></a><span class="calibre3">Sync conflicts</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">For a large storage system like Google Drive, sync conflicts happen from time to time. When two users modify the same file or folder at the same time, a conflict happens. How can we resolve the conflict? Here is our strategy: the first version that gets processed wins, and the version that gets processed later receives a conflict. Figure 15-8 shows an example of a sync conflict.</span> </p> 
+   <p class="calibre15"> <img src="../images/00219.jpeg" alt="A picture containing clock  Description automatically generated" class="calibre16"/> </p> 
+   <p class="calibre4"> <span class="calibre5">In Figure 15-8, user 1 and user 2 tries to update the same file at the same time, but user 1’s file is processed by our system first. User 1’s update operation goes through, but, user 2 gets a sync conflict. How can we resolve the conflict for user 2? Our system presents both copies of the same file: user 2’s local copy and the latest version from the server (Figure 15-9). User 2 has the option to merge both files or override one version with the other. </span> </p> 
+   <p class="calibre15"> <img src="../images/00220.jpeg" alt="A screenshot of a cell phone  Description automatically generated" class="calibre183"/> </p> 
+   <p class="calibre4"> <span class="calibre5">While multiple users are editing the same document at the same, it is challenging to keep the document synchronized. Interested readers should refer to the reference material [4] [5].</span> </p> 
+   <h3 class="calibre20"> <a id="_s08gxaiahhr2"></a><span class="calibre3">High-level design</span> </h3> 
+   <p class="calibre4"> <span class="calibre32">Figure 15-10 illustrates the proposed high-level design. Let us examine each component of the system. </span> </p> 
+   <p class="calibre15"> <img src="../images/00221.jpeg" alt="A close up of a map  Description automatically generated" class="calibre184"/> </p> 
+   <p class="calibre4"> <span class="calibre3">User</span><span class="calibre5">:</span><span class="calibre3"> </span><span class="calibre5">A user uses the application either through a browser or mobile app.</span> </p> 
+   <p class="calibre4"> <span class="calibre3">Block servers: </span><span class="calibre5">Block servers upload blocks to cloud storage. Block storage, referred to as block-level storage, is a technology to store data files on cloud-based environments. A file can be split into several blocks, each with a unique hash value, stored in our metadata database. Each block is treated as an independent object and stored in our storage system (S3). To reconstruct a file, blocks are joined in a particular order. As for the block size, we use Dropbox as a reference: it sets the maximal size of a block to 4MB [6]. </span> </p> 
+   <p class="calibre4"> <span class="calibre3">Cloud storage:</span><span class="calibre5"> A file is split into smaller blocks and stored in cloud storage. </span> </p> 
+   <p class="calibre4"> <span class="calibre3">Cold storage: </span><span class="calibre5">Cold storage is a computer system designed for storing inactive data, meaning files are not accessed for a long time. </span> </p> 
+   <p class="calibre4"> <span class="calibre3">Load balancer</span><span class="calibre5">: A load balancer evenly distributes requests among API servers.</span> </p> 
+   <p class="calibre4"> <span class="calibre3">API servers: </span><span class="calibre5">These are responsible for almost everything other than the uploading flow. API servers are used for user authentication, managing user profile, updating file metadata, etc.</span> </p> 
+   <p class="calibre4"> <span class="calibre3">Metadata database: </span><span class="calibre32">It stores metadata of users, files, blocks, versions, etc. Please note that files are stored in the cloud and the metadata database only contains metadata.</span> </p> 
+   <p class="calibre4"> <span class="calibre3">Metadata cache</span><span class="calibre5">: Some of the metadata are cached for fast retrieval.  </span> </p> 
+   <p class="calibre4"> <span class="calibre3">Notification service</span><span class="calibre5">: It is a publisher/subscriber system that allows data to be transferred from notification service to clients as certain events happen. In our specific case, notification service notifies relevant clients when a file is added/edited/removed elsewhere so they can pull the latest changes. </span> </p> 
+   <p class="calibre4"> <span class="calibre3">Offline backup queue</span><span class="calibre5">: If a client is offline and cannot pull the latest file changes, the offline backup queue stores the info so changes will be synced when the client is online.</span> </p> 
+   <p class="calibre4"> <span class="calibre5">We have discussed the design of Google Drive at the high-level. Some of the components are complicated and worth careful examination; we will discuss these in detail in the deep dive. </span> </p> 
+   </div>
+ </body></html>

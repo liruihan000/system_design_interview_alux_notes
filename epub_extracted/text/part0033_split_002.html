@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css"/>
+    <meta name="generator" content="Amazon.com"/>
+    <title>Unknown</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link rel="stylesheet" type="text/css" href="../stylesheet.css"/>
+<link rel="stylesheet" type="text/css" href="../page_styles.css"/>
+</head>
+  <body class="calibre">
+<div class="calibre1">
+<h2 class="calibre14" id="calibre_pb_2"> <span class="calibre3">Step 2 - Propose high-level design and get buy-in</span> </h2> 
+   <p class="calibre6"> <span class="calibre5">As discussed previously, the interviewer recommended leveraging existing cloud services instead of building everything from scratch. CDN and blob storage are the cloud services we will leverage. Some readers might ask why not building everything by ourselves? Reasons are listed below: </span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">System design interviews are not about building everything from scratch. Within the limited time frame, choosing the right technology to do a job right is more important than explaining how the technology works in detail. For instance, mentioning blob storage for storing source videos is enough for the interview. Talking about the detailed design for blob storage could be an overkill. </span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Building scalable blob storage or CDN is extremely complex and costly. Even large companies like Netflix or Facebook do not build everything themselves. Netflix leverages Amazon’s cloud services [4], and Facebook uses Akamai’s CDN [5].</span> </p> 
+   <p class="calibre4"> <span class="calibre5">At the high-level, the system comprises three components (Figure 14-3).</span> </p> 
+   <p class="calibre15"> <img src="../images/00186.jpeg" alt="A close up of a map  Description automatically generated" class="calibre80"/> </p> 
+   <p class="calibre4"> <span class="calibre3">Client</span><span class="calibre5">: You can watch YouTube on your computer, mobile phone, and smartTV.</span> </p> 
+   <p class="calibre4"> <span class="calibre3">CDN</span><span class="calibre5">: Videos are stored in CDN. When you press play, a video is streamed from the CDN. </span> </p> 
+   <p class="calibre4"> <span class="calibre3">API servers</span><span class="calibre5">: Everything else except video streaming goes through API servers. This includes feed recommendation, generating video upload URL, updating metadata database and cache, user signup, etc.   </span> </p> 
+   <p class="calibre6"> <span class="calibre5">In the question/answer session, the interviewer showed interests in two flows:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Video uploading flow</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Video streaming flow</span> </p> 
+   <p class="calibre4"> <a id="_ssn00lth5u5b"></a><span class="calibre5">We will explore the high-level design for each of them.</span> </p> 
+   <h3 class="calibre20"> <a id="_6lzu6xui1d2m"></a><span class="calibre3">Video uploading flow</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">Figure 14-4 shows the high-level design for the video uploading. </span> </p> 
+   <p class="calibre15"> <img src="../images/00187.jpeg" alt="A close up of a map  Description automatically generated" class="calibre169"/> </p> 
+   <p class="calibre6"> <span class="calibre5">It consists of the following components:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">User: A user watches YouTube on devices such as a computer, mobile phone, or smart TV.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Load balancer: A load balancer evenly distributes requests among API servers.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">API servers: All user requests go through API servers except video streaming. </span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Metadata DB: Video metadata are stored in Metadata DB. It is sharded and replicated to meet performance and high availability requirements.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Metadata cache: For better performance, video metadata and user objects are cached. </span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Original storage: A blob storage system is used to store original videos. A quotation in Wikipedia regarding blob storage shows that: “A Binary Large Object (BLOB) is a collection of binary data stored as a single entity in a database management system” [6].</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Transcoding servers: Video transcoding is also called video encoding. It is the process of converting a video format to other formats (MPEG, HLS, etc), which provide the best video streams possible for different devices and bandwidth capabilities.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Transcoded storage: It is a blob storage that stores transcoded video files.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">CDN: Videos are cached in CDN. When you click the play button, a video is streamed from the CDN. </span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Completion queue: It is a message queue that stores information about video transcoding completion events.</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Completion handler: This consists of a list of workers that pull event data from the completion queue and update metadata cache and database.</span> </p> 
+   <p class="calibre6"> <span class="calibre5">Now that we understand each component individually, let us examine how the video uploading flow works. The flow is broken down into two processes running in parallel.</span> </p> 
+   <p class="calibre9"> <span class="calibre5">a. Upload the actual video.</span> </p> 
+   <p class="calibre17"> <span class="calibre5">b. Update video metadata. Metadata contains information about video URL, size, resolution, format, user info, etc.</span> </p> 
+   <h4 class="calibre44"> <a id="_b6c56aaf58ws"></a><span class="calibre3">Flow a: upload the actual video </span> </h4> 
+   <p class="calibre15"> <img src="../images/00188.jpeg" alt="A close up of a map  Description automatically generated" class="calibre170"/> </p> 
+   <p class="calibre6"> <span class="calibre5">Figure 14-5 shows how to upload the actual video. The explanation is shown below:</span> </p> 
+   <p class="calibre9"> <span class="calibre5">1. Videos are uploaded to the original storage.</span> </p> 
+   <p class="calibre9"> <span class="calibre5">2. Transcoding servers fetch videos from the original storage and start transcoding.</span> </p> 
+   <p class="calibre9"> <span class="calibre5">3. Once transcoding is complete, the following two steps are executed in parallel:</span> </p> 
+   <p class="calibre29"> <span class="calibre5">3a. Transcoded videos are sent to transcoded storage. </span> </p> 
+   <p class="calibre29"> <span class="calibre5">3b. Transcoding completion events are queued in the completion queue. </span> </p> 
+   <p class="calibre9"> <span class="calibre5">3a.1. Transcoded videos are distributed to CDN.</span> </p> 
+   <p class="calibre9"> <span class="calibre5">3b.1. Completion handler contains a bunch of workers that continuously pull event data from the queue.</span> </p> 
+   <p class="calibre9"> <span class="calibre5">3b.1.a. and 3b.1.b. Completion handler updates the metadata database and cache when video transcoding is complete.</span> </p> 
+   <p class="calibre17"> <span class="calibre5">4. API servers inform the client that the video is successfully uploaded and is ready for streaming.</span> </p> 
+   <h4 class="calibre44"> <a id="_mk4c8x2lpkj0"></a><span class="calibre3">Flow b: update the metadata</span> </h4> 
+   <p class="calibre4"> <span class="calibre5">While a file is being uploaded to the original storage, the client in parallel sends a request to update the video metadata as shown in Figure 14-6. The request contains video metadata, including file name, size, format, etc. API servers update the metadata cache and database.</span> </p> 
+   <p class="calibre15"> <img src="../images/00189.jpeg" alt="A close up of text on a white background  Description automatically generated" class="calibre171"/> </p> 
+   <h3 class="calibre20"> <a id="_xdad4q1y7dug"></a><span class="calibre3">Video streaming flow</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">Whenever you watch a video on YouTube, it usually starts streaming immediately and you do not wait until the whole video is downloaded. Downloading means the whole video is copied to your device, while streaming means your device continuously receives video streams from remote source videos. When you watch streaming videos, your client loads a little bit of data at a time so you can watch videos immediately and continuously.  </span> </p> 
+   <p class="calibre6"> <span class="calibre5">Before we discuss video streaming flow, let us look at an important concept: streaming protocol. This is a standardized way to control data transfer for video streaming. Popular streaming protocols are:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">MPEG–DASH. MPEG stands for “Moving Picture Experts Group” and DASH stands for "Dynamic Adaptive Streaming over HTTP".</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Apple HLS. HLS stands for “HTTP Live Streaming”.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Microsoft Smooth Streaming. </span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Adobe HTTP Dynamic Streaming (HDS).</span> </p> 
+   <p class="calibre4"> <span class="calibre5">You do not need to fully understand or even remember those streaming protocol names as they are low-level details that require specific domain knowledge. The important thing here is to understand that different streaming protocols support different video encodings and playback players. When we design a video streaming service, we have to choose the right streaming protocol to support our use cases. To learn more about streaming protocols, here is an excellent article [7].</span> </p> 
+   <p class="calibre4"> <span class="calibre5">Videos are streamed from CDN directly. The edge server closest to you will deliver the video. Thus, there is very little latency. Figure 14-7 shows a high level of design for video streaming.</span> </p> 
+   <p class="calibre15"> <img src="../images/00190.jpeg" alt="A screenshot of a cell phone  Description automatically generated" class="calibre172"/> </p> 
+   </div>
+ </body></html>

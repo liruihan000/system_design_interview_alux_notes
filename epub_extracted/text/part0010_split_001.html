@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css"/>
+    <meta name="generator" content="Amazon.com"/>
+    <title>Unknown</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link rel="stylesheet" type="text/css" href="../stylesheet.css"/>
+<link rel="stylesheet" type="text/css" href="../page_styles.css"/>
+</head>
+  <body class="calibre">
+<div class="calibre1">
+<h2 class="calibre14" id="calibre_pb_0"> <a id="_xza4uptixac7"></a><span class="calibre3">Step 4 - Wrap up</span> </h2> 
+   <p class="calibre6"> <span class="calibre5">In this chapter, we discussed different algorithms of rate limiting and their pros/cons. Algorithms discussed include:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Token bucket</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Leaking bucket</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Fixed window</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Sliding window log</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Sliding window counter</span> </p> 
+   <p class="calibre6"> <span class="calibre5">Then, we discussed the system architecture, rate limiter in a distributed environment, performance optimization and monitoring. Similar to any system design interview questions, there are additional talking points you can mention if time allows:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Hard vs soft rate limiting.</span> </p> 
+   <p class="calibre29"> <span class="calibre10">•</span><span class="calibre5">Hard: The number of requests cannot exceed the threshold.</span> </p> 
+   <p class="calibre29"> <span class="calibre10">•</span><span class="calibre5">Soft:  Requests can exceed the threshold for a short period.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Rate limiting at different levels. In this chapter, we only talked about rate limiting at the application level (HTTP: layer 7). It is possible to apply rate limiting at other layers. For example, you can apply rate limiting by IP addresses using Iptables [15] (IP: layer 3). Note: The Open Systems Interconnection model (OSI model) has 7 layers [16]:  Layer 1: Physical layer, Layer 2: Data link layer, Layer 3: Network layer, Layer 4: Transport layer, Layer 5: Session layer, Layer 6: Presentation layer, Layer 7: Application layer.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Avoid being rate limited. Design your client with best practices:</span> </p> 
+   <p class="calibre29"> <span class="calibre10">•</span><span class="calibre5">Use client cache to avoid making frequent API calls.</span> </p> 
+   <p class="calibre29"> <span class="calibre10">•</span><span class="calibre5">Understand the limit and do not send too many requests in a short time frame.</span> </p> 
+   <p class="calibre29"> <span class="calibre10">•</span><span class="calibre5">Include code to catch exceptions or errors so your client can gracefully recover from exceptions.</span> </p> 
+   <p class="calibre29"> <span class="calibre10">•</span><span class="calibre5">Add sufficient back off time to retry logic.</span> </p> 
+   <p class="calibre4"> <span class="calibre5">Congratulations on getting this far! Now give yourself a pat on the back. Good job!</span> </p> 
+   <p class="calibre4"> </p>
+  </div>
+ </body></html>

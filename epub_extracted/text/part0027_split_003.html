@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css"/>
+    <meta name="generator" content="Amazon.com"/>
+    <title>Unknown</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link rel="stylesheet" type="text/css" href="../stylesheet.css"/>
+<link rel="stylesheet" type="text/css" href="../page_styles.css"/>
+</head>
+  <body class="calibre">
+<div class="calibre1">
+<h2 class="calibre14" id="calibre_pb_3"> <a id="_ji1b61qpj8fk"></a><span class="calibre3">Step 3 - Design deep dive</span> </h2> 
+   <p class="calibre4"> <span class="calibre5">The high-level design briefly covered two flows: feed publishing and news feed building. Here, we discuss those topics in more depth. </span> </p> 
+   <h3 class="calibre20"> <a id="_1a346fx"></a><span class="calibre3">Feed publishing deep dive</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">Figure 11-4 outlines the detailed design for feed publishing. We have discussed most of components in high-level design, and we will focus on two components: web servers and fanout service.</span> </p> 
+   <p class="calibre15"> <img src="../images/00141.jpeg" alt="A close up of a map  Description automatically generated" class="calibre16"/> </p> 
+   <h4 class="calibre44"> <span class="calibre3">Web servers</span> </h4> 
+   <p class="calibre4"> <span class="calibre5">Besides communicating with clients, web servers enforce authentication and rate-limiting. Only users signed in with valid </span><span class="calibre18">auth_token</span><span class="calibre5"> are allowed to make posts. The system limits the number of posts a user can make within a certain period, vital to prevent spam and abusive content.</span> </p> 
+   <h4 class="calibre44"> <span class="calibre3">Fanout service</span> </h4> 
+   <p class="calibre4"> <span class="calibre5">Fanout is the process of delivering a post to all friends. Two types of fanout models are: fanout on write (also called push model) and fanout on read (also called pull model). Both models have pros and cons. We explain their workflows and explore the best approach to support our system.</span> </p> 
+   <p class="calibre4"> <span class="calibre3">Fanout on write. </span><span class="calibre5">With this approach,</span><span class="calibre3"> </span><span class="calibre5">news feed is pre-computed during write time. A new post is delivered to friends’ cache immediately after it is published. </span> </p> 
+   <p class="calibre6"> <span class="calibre5">Pros: </span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">The news feed is generated in real-time and can be pushed to friends immediately.</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Fetching news feed is fast because the news feed is pre-computed during write time.</span> </p> 
+   <p class="calibre6"> <span class="calibre5">Cons: </span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">If a user has many friends, fetching the friend list and generating news feeds for all of them are slow and time consuming. It is called hotkey problem.</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">For inactive users or those rarely log in, pre-computing news feeds waste computing resources.</span> </p> 
+   <p class="calibre4"> <span class="calibre3">Fanout on read</span><span class="calibre5">. The news feed is generated during read time. This is an on-demand model. Recent posts are pulled when a user loads her home page.</span> </p> 
+   <p class="calibre6"> <span class="calibre5">Pros:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">For inactive users or those who rarely log in, fanout on read works better because it will not waste computing resources on them.</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Data is not pushed to friends so there is no hotkey problem.</span> </p> 
+   <p class="calibre6"> <span class="calibre5">Cons:</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Fetching the news feed is slow as the news feed is not pre-computed.</span> </p> 
+   <p class="calibre4"> <span class="calibre5">We adopt a hybrid approach to get benefits of both approaches and avoid pitfalls in them. Since fetching the news feed fast is crucial, we use a push model for the majority of users. For celebrities or users who have many friends/followers, we let followers pull news content on-demand to avoid system overload. Consistent hashing is a useful technique to mitigate the hotkey problem as it helps to distribute requests/data more evenly.</span> </p> 
+   <p class="calibre4"> <span class="calibre5">Let us take a close look at the fanout service as shown in Figure 11-5. </span> </p> 
+   <p class="calibre15"> <img src="../images/00142.jpeg" alt="A close up of a map  Description automatically generated" class="calibre139"/> </p> 
+   <p class="calibre6"> <span class="calibre5">The fanout service works as follows:</span> </p> 
+   <p class="calibre9"> <span class="calibre5">1. Fetch friend IDs from the graph database. Graph databases are suited for managing friend relationship and friend recommendations. Interested readers wishing to learn more about this concept should refer to the reference material [2].</span> </p> 
+   <p class="calibre9"> <span class="calibre5">2. Get friends info from the user cache. The system then filters out friends based on user settings. For example, if you mute someone, her posts will not show up on your news feed even though you are still friends. Another reason why posts may not show is that a user could selectively share information with specific friends or hide it from other people.</span> </p> 
+   <p class="calibre9"> <span class="calibre5">3. Send friends list and new post ID to the message queue.</span> </p> 
+   <p class="calibre9"> <span class="calibre5">4. Fanout workers fetch data from the message queue and store news feed data in the news feed cache. You can think of the news feed cache as a </span><span class="calibre18">&lt;post_id, user_id&gt;</span><span class="calibre5"> mapping table. Whenever a new post is made, it will be appended to the news feed table as shown in Figure 11-6. The memory consumption can become very large if we store the entire user and post objects in the cache. Thus, only IDs are stored. To keep the memory size small, we set a configurable limit. The chance of a user scrolling through thousands of posts in news feed is slim. Most users are only interested in the latest content, so the cache miss rate is low. </span> </p> 
+   <p class="calibre17"> <span class="calibre5">5. Store </span><span class="calibre18">&lt;post_id, user_id &gt;</span><span class="calibre5"> in news feed cache. Figure 11-6 shows an example of what the news feed looks like in cache.</span> </p> 
+   <p class="calibre15"> <img src="../images/00143.jpeg" alt="A screenshot of a cell phone  Description automatically generated" class="calibre140"/><a id="_3u2rp3q"></a><a id="_2981zbj"></a><a id="_qjaubhsnofuq"><span class="calibre141"></span><span class="calibre142"></span></a> </p> 
+   <h3 class="calibre20"> <span class="calibre3">Newsfeed retrieval deep dive</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">Figure 11-7 illustrates the detailed design for news feed retrieval.</span> </p> 
+   <p class="calibre15"> <img src="../images/00144.jpeg" alt="A close up of a map  Description automatically generated" class="calibre143"/> </p> 
+   <p class="calibre6"> <span class="calibre5">As shown in Figure 11-7, media content (images, videos, etc.) are stored in CDN for fast retrieval. Let us look at how a client retrieves news feed.</span> </p> 
+   <p class="calibre9"> <span class="calibre5">1. A user sends a request to retrieve her news feed. The request looks like this: </span><span class="calibre18">/v1/me/feed</span> </p> 
+   <p class="calibre9"> <span class="calibre5">2. The load balancer redistributes requests to web servers.</span> </p> 
+   <p class="calibre9"> <span class="calibre5">3. Web servers call the news feed service to fetch news feeds.</span> </p> 
+   <p class="calibre9"> <span class="calibre5">4. News feed service gets a list post IDs from the news feed cache.</span> </p> 
+   <p class="calibre9"> <span class="calibre5">5. A user’s news feed is more than just a list of feed IDs. It contains username, profile picture, post content, post image, etc. Thus, the news feed service fetches the complete user and post objects from caches (user cache and post cache) to construct the fully hydrated news feed.</span> </p> 
+   <p class="calibre17"> <span class="calibre5">6. The fully hydrated news feed is returned in JSON format back to the client for rendering.</span> </p> 
+   <h3 class="calibre20"> <span class="calibre3">Cache architecture</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">Cache is extremely important for a news feed system. We divide the cache tier into 5 layers as shown in Figure 11-8.</span> </p> 
+   <p class="calibre15"> <img src="../images/00145.jpeg" alt="A picture containing screenshot  Description automatically generated" class="calibre16"/> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">News Feed: It stores IDs of news feeds.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Content: It stores every post data. Popular content is stored in hot cache. </span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Social Graph: It stores user relationship data.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Action: It stores info about whether a user liked a post, replied a post, or took other actions on a post.</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Counters: It stores counters for like, reply, follower, following, etc.</span> </p> 
+   </div>
+ </body></html>

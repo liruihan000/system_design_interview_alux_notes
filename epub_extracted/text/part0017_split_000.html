@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css"/>
+    <meta name="generator" content="Amazon.com"/>
+    <title>Unknown</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link rel="stylesheet" type="text/css" href="../stylesheet.css"/>
+<link rel="stylesheet" type="text/css" href="../page_styles.css"/>
+</head>
+  <body class="calibre">
+  <div class="calibre1"> 
+   <h3 class="calibre20"> <a id="_xysa9cxzuanh"></a><span class="calibre3">System architecture diagram</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">Now that we have discussed different technical considerations in designing a key-value store, we can shift our focus on the architecture diagram, shown in Figure 6-17.</span> </p> 
+   <p class="calibre4"> <img src="../images/00086.jpeg" alt="A screenshot of a cell phone  Description automatically generated" class="calibre16"/> </p> 
+   <p class="calibre6"> <span class="calibre5">Main features of the architecture are listed as follows:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Clients communicate with the key-value store through simple APIs: </span><span class="calibre18">get(key)</span><span class="calibre5"> and </span><span class="calibre18">put(key, value)</span><span class="calibre5">.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">A coordinator is a node that acts as a proxy between the client and the key-value store.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Nodes are distributed on a ring using consistent hashing.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">The system is completely decentralized so adding and moving nodes can be automatic.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Data is replicated at multiple nodes.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">There is no single point of failure as every node has the same set of responsibilities.</span> </p> 
+   <p class="calibre4"> <span class="calibre5">As the design is decentralized, each node performs many tasks as presented in Figure 6-18.</span> </p> 
+   <p class="calibre15"> <img src="../images/00087.jpeg" alt="A close up of a device  Description automatically generated" class="calibre87"/> </p> 
+   <h3 class="calibre20"> <a id="_wbbwounb2dqr"></a><span class="calibre3">Write path</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">Figure 6-19 explains what happens after a write request is directed to a specific node. Please note the proposed designs for write/read paths are primary based on the architecture of Cassandra [8].</span> </p> 
+   <p class="calibre15"> <img src="../images/00088.jpeg" alt="A screenshot of a cell phone  Description automatically generated" class="calibre16"/> </p> 
+   <p class="calibre9"> <span class="calibre5">1. The write request is persisted on a commit log file.  </span> </p> 
+   <p class="calibre9"> <span class="calibre5">2. Data is saved in the memory cache.</span> </p> 
+   <p class="calibre17"> <span class="calibre5">3. When the memory cache is full or reaches a predefined threshold, data is flushed to SSTable [9] on disk. Note: A sorted-string table (SSTable) is a sorted list of &lt;key, value&gt; pairs. For readers interested in learning more about SStable, refer to the reference material [9].</span> </p> 
+   <h3 class="calibre20"> <a id="_hj7nmsbcb8bo"></a><span class="calibre3">Read path</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">After a read request is directed to a specific node, it first checks if data is in the memory cache. If so, the data is returned to the client as shown in Figure 6-20.</span> </p> 
+   <p class="calibre15"> <img src="../images/00089.jpeg" alt="A screenshot of a cell phone  Description automatically generated" class="calibre16"/> </p> 
+   <p class="calibre4"> <span class="calibre5">If the data is not in memory, it will be retrieved from the disk instead. We need an efficient way to find out which SSTable contains the key. Bloom filter [10] is commonly used to solve this problem. </span> </p> 
+   <p class="calibre4"> <span class="calibre5">The read path is shown in Figure 6-21 when data is not in memory.</span> </p> 
+   <p class="calibre15"> <img src="../images/00090.jpeg" alt="A screenshot of a cell phone  Description automatically generated" class="calibre16"/> </p> 
+   <p class="calibre9"> <span class="calibre5">1. The system first checks if data is in memory. If not, go to step 2.</span> </p> 
+   <p class="calibre9"> <span class="calibre5">2. If data is not in memory, the system checks the bloom filter.</span> </p> 
+   <p class="calibre9"> <span class="calibre5">3. The bloom filter is used to figure out which SSTables might contain the key.</span> </p> 
+   <p class="calibre9"> <span class="calibre5">4. SSTables return the result of the data set.</span> </p> 
+   <p class="calibre17"> <span class="calibre5">5. The result of the data set is returned to the client.</span> </p> 
+   </div>
+ </body></html>

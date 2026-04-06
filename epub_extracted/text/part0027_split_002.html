@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css"/>
+    <meta name="generator" content="Amazon.com"/>
+    <title>Unknown</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link rel="stylesheet" type="text/css" href="../stylesheet.css"/>
+<link rel="stylesheet" type="text/css" href="../page_styles.css"/>
+</head>
+  <body class="calibre">
+<div class="calibre1">
+<h2 class="calibre14" id="calibre_pb_2"> <a id="_3nq0a4boouva"></a><span class="calibre3">Step 2 - Propose high-level design and get buy-in</span> </h2> 
+   <p class="calibre6"> <span class="calibre5">The design is divided into two flows: feed publishing and news feed building.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Feed publishing: when a user publishes a post, corresponding data is written into cache and database. A post is populated to her friends’ news feed.</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Newsfeed building: for simplicity, let us assume the news feed is built by aggregating friends’ posts in reverse chronological order. </span> </p> 
+   <h3 class="calibre20"> <a id="_4cvf6rk7g8zc"></a><span class="calibre3">Newsfeed APIs</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">The news feed APIs are the primary ways for clients to communicate with servers. Those APIs are HTTP based that allow clients to perform actions, which include posting a status, retrieving news feed, adding friends, etc. We discuss two most important APIs: feed publishing API and news feed retrieval API.</span> </p> 
+   <p class="calibre6"> <span class="calibre3">Feed publishing API</span> </p> 
+   <p class="calibre4"> <span class="calibre5">To publish a post, a HTTP POST request will be sent to the server. The API is shown below:</span> </p> 
+   <p class="calibre41"> <span class="calibre18">POST /v1/me/feed</span> </p> 
+   <p class="calibre41"> <span class="calibre5">Params:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">content: content is the text of the post.</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">auth_token: it is used to authenticate API requests. </span> </p> 
+   <p class="calibre6"> <span class="calibre3">Newsfeed retrieval API</span> </p> 
+   <p class="calibre4"> <span class="calibre5">The API to retrieve news feed is shown below: </span> </p> 
+   <p class="calibre41"> <span class="calibre18">GET /v1/me/feed</span> </p> 
+   <p class="calibre41"> <span class="calibre5">Params:</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">auth_token: it is used to authenticate API requests. </span> </p> 
+   <h3 class="calibre20"> <a id="_pl1k3o9uxmw"></a><a id="_qn2997sq2z58"><span class="calibre135"></span></a><span class="calibre3">Feed publishing</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">Figure 11-2 shows the high-level design of the feed publishing flow.</span> </p> 
+   <p class="calibre15"> <img src="../images/00139.jpeg" alt="A close up of a map  Description automatically generated" class="calibre136"/> </p> 
+   <p class="calibre9"> <a id="_243i4a2"></a><span class="calibre10">•</span><span class="calibre5">User: a user can view news feeds on a browser or mobile app. A user makes a post with content “Hello” through API:</span> </p> 
+   <p class="calibre9"> <span class="calibre18">/v1/me/feed?content=Hello&amp;auth_token={auth_token}</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Load balancer: distribute traffic to web servers.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Web servers: web servers redirect traffic to different internal services. </span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Post service: persist post in the database and cache.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Fanout service: push new content to friends’ news feed. Newsfeed data is stored in the cache for fast retrieval. </span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Notification service: inform friends that new content is available and send out push notifications. </span><a id="_j8sehv"></a> </p> 
+   <h3 class="calibre20"> <a id="_jhcmycrja13a"></a><span class="calibre3">Newsfeed building</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">In this section, we discuss how news feed is built behind the scenes. Figure 11-3 shows the high-level design:</span> </p> 
+   <p class="calibre15"> <img src="../images/00140.jpeg" alt="A close up of a logo  Description automatically generated" class="calibre137"/> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">User: a user sends a request to retrieve her news feed. The request looks like this: </span><span class="calibre10">/</span><span class="calibre5">v1/me/feed.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Load balancer: load balancer redirects traffic to web servers.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Web servers: web servers route requests to newsfeed service.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Newsfeed service: news feed service fetches news feed from the cache.</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Newsfeed cache: store news feed IDs needed to render the news feed.</span><a id="_338fx5o"></a><a id="_cwslfc9b1cnn"><span class="calibre138"></span></a> </p> 
+   </div>
+ </body></html>

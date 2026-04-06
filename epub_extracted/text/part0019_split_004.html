@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css"/>
+    <meta name="generator" content="Amazon.com"/>
+    <title>Unknown</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link rel="stylesheet" type="text/css" href="../stylesheet.css"/>
+<link rel="stylesheet" type="text/css" href="../page_styles.css"/>
+</head>
+  <body class="calibre">
+<div class="calibre1">
+<h2 class="calibre14" id="calibre_pb_4"> <span class="calibre3">Step 4 - Wrap up</span> </h2> 
+   <p class="calibre4"> <span class="calibre5">In this chapter, we discussed different approaches to design a unique ID generator: multi-master replication, UUID, ticket server, and Twitter snowflake-like unique ID generator. We settle on snowflake as it supports all our use cases and is scalable in a distributed environment. </span> </p> 
+   <p class="calibre6"> <span class="calibre5">If there is extra time at the end of the interview, here are a few additional talking points:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Clock synchronization. In our design, we assume ID generation servers have the same clock. This assumption might not be true when a server is running on multiple cores. The same challenge exists in multi-machine scenarios. Solutions to clock synchronization are out of the scope of this book; however, it is important to understand the problem exists. Network Time Protocol is the most popular solution to this problem. For interested readers, refer to the reference material [4].</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Section length tuning. For example, fewer sequence numbers but more timestamp bits are effective for low concurrency and long-term applications.</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">High availability. Since an ID generator is a mission-critical system, it must be highly available. </span> </p> 
+   <p class="calibre4"> <span class="calibre5">Congratulations on getting this far! Now give yourself a pat on the back. Good job!</span></p>
+  </div>
+ </body></html>

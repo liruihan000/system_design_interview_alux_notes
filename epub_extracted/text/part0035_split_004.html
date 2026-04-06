@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css"/>
+    <meta name="generator" content="Amazon.com"/>
+    <title>Unknown</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link rel="stylesheet" type="text/css" href="../stylesheet.css"/>
+<link rel="stylesheet" type="text/css" href="../page_styles.css"/>
+</head>
+  <body class="calibre">
+<div class="calibre1">
+<h2 class="calibre14" id="calibre_pb_4"> <a id="_u0ntfqd7o3zn"></a><span class="calibre3">Step 4 - Wrap up</span> </h2> 
+   <p class="calibre4"> <span class="calibre5">In this chapter, we proposed a system design to support Google Drive. The combination of strong consistency, low network bandwidth and fast sync make the design interesting. Our design contains two flows: manage file metadata and file sync. Notification service is another important component of the system. It uses long polling to keep clients up to date with file changes.   </span> </p> 
+   <p class="calibre4"> <span class="calibre5">Like any system design interview questions, there is no perfect solution. Every company has its unique constraints and you must design a system to fit those constraints. Knowing the tradeoffs of your design and technology choices are important. If there are a few minutes left, you can talk about different design choices. </span> </p> 
+   <p class="calibre6"> <span class="calibre5">For example, we can upload files directly to cloud storage from the client instead of going through block servers. The advantage of this approach is that it makes file upload faster because a file only needs to be transferred once to the cloud storage. In our design, a file is transferred to block servers first, and then to the cloud storage. However, the new approach has a few drawbacks: </span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">First, the same chunking, compression, and encryption logic must be implemented on different platforms (iOS, Android, Web). It is error-prone and requires a lot of engineering effort. In our design, all those logics are implemented in a centralized place: block servers.</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Second, as a client can easily be hacked or manipulated, implementing encrypting logic on the client side is not ideal.</span> </p> 
+   <p class="calibre4"> <span class="calibre5">Another interesting evolution of the system is moving online/offline logic to a separate service. Let us call it presence service. By moving presence service out of notification servers, online/offline functionality can easily be integrated by other services.</span> </p> 
+   <p class="calibre4"> <span class="calibre5">Congratulations on getting this far! Now give yourself a pat on the back. Good job!</span> </p> 
+   <p class="calibre4"> </p>
+  </div>
+ </body></html>

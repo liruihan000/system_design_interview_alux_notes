@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css"/>
+    <meta name="generator" content="Amazon.com"/>
+    <title>Unknown</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link rel="stylesheet" type="text/css" href="../stylesheet.css"/>
+<link rel="stylesheet" type="text/css" href="../page_styles.css"/>
+</head>
+  <body class="calibre">
+<div class="calibre1">
+<h2 class="calibre14" id="calibre_pb_3"> <span class="calibre3">Step 3 - Design deep dive</span> </h2> 
+   <p class="calibre6"> <span class="calibre5">In the high-level design, we discussed different types of notifications, contact info gathering flow, and notification sending/receiving flow. We will explore the following in deep dive:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Reliability.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Additional component and considerations: notification template, notification settings, rate limiting, retry mechanism, security in push notifications, monitor queued notifications and event tracking.</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Updated design.</span> </p> 
+   <h3 class="calibre20"> <a id="_yfbs61ffxzar"></a><span class="calibre3">Reliability</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">We must answer a few important reliability questions when designing a notification system in distributed environments.</span> </p> 
+   <p class="calibre6"> <span class="calibre3">How to prevent data loss?</span> </p> 
+   <p class="calibre4"> <span class="calibre5">One of the most important requirements in a notification system is that it cannot lose data. Notifications can usually be delayed or re-ordered, but never lost. To satisfy this requirement, the notification system persists notification data in a database and implements a retry mechanism. The notification log database is included for data persistence, as shown in Figure 10-11.</span> </p> 
+   <p class="calibre15"> <img src="../images/00134.jpeg" alt="A screenshot of a cell phone  Description automatically generated" class="calibre129"/> </p> 
+   <p class="calibre6"> <span class="calibre3">Will recipients receive a notification exactly once?</span> </p> 
+   <p class="calibre4"> <span class="calibre5">The short answer is no. Although notification is delivered exactly once most of the time, the distributed nature could result in duplicate notifications. To reduce the duplication occurrence, we introduce a dedupe mechanism and handle each failure case carefully. Here is a simple dedupe logic:</span> </p> 
+   <p class="calibre4"> <span class="calibre5">When a notification event first arrives, we check if it is seen before by checking the event ID. If it is seen before, it is discarded. Otherwise, we will send out the notification. For interested readers to explore why we cannot have exactly once delivery, refer to the reference material [5]. </span><a id="_3g3q7khu86fz"></a> </p> 
+   <h3 class="calibre20"> <span class="calibre3">Additional components and considerations</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">We have discussed how to collect user contact info, send, and receive a notification. A notification system is a lot more than that. Here we discuss additional components including template reusing, notification settings, event tracking, system monitoring, rate limiting, etc.</span> </p> 
+   <h4 class="calibre44"> <span class="calibre3">Notification template</span> </h4> 
+   <p class="calibre4"> <span class="calibre5">A large notification system sends out millions of notifications per day, and many of these notifications follow a similar format. Notification templates are introduced to avoid building every notification from scratch. A notification template is a preformatted notification to create your unique notification by customizing parameters, styling, tracking links, etc. Here is an example template of push notifications.</span> </p> 
+   <p class="calibre6"> <span class="calibre5">BODY:</span> </p> 
+   <p class="calibre6"> <span class="calibre5">You dreamed of it. We dared it. [ITEM NAME] is back — only until [DATE].</span> </p> 
+   <p class="calibre6"> <span class="calibre5">CTA:</span> </p> 
+   <p class="calibre4"> <span class="calibre5">Order Now. Or, Save My [ITEM NAME]</span> </p> 
+   <p class="calibre4"> <span class="calibre5">The benefits of using notification templates include maintaining a consistent format, reducing the margin error, and saving time. </span> </p> 
+   <h4 class="calibre44"> <span class="calibre3">Notification setting</span> </h4> 
+   <p class="calibre4"> <span class="calibre5">Users generally receive way too many notifications daily and they can easily feel overwhelmed. Thus, many websites and apps give users fine-grained control over notification settings. This information is stored in the notification setting table, with the following fields: </span> </p> 
+   <p class="calibre6"> <span class="calibre5">user_id   bigInt</span> </p> 
+   <p class="calibre6"> <span class="calibre5">channel  varchar    # push notification, email or SMS</span> </p> 
+   <p class="calibre4"> <span class="calibre5">opt_in   boolean    # opt-in to receive notification</span> </p> 
+   <p class="calibre4"> <span class="calibre32">Before any notification is sent to a user, we first check if a user is opted-in to receive this type of notification.</span> </p> 
+   <h4 class="calibre44"> <span class="calibre3">Rate limiting</span> </h4> 
+   <p class="calibre4"> <span class="calibre5">To avoid overwhelming users with too many notifications, we can limit the number of notifications a user can receive. This is important because receivers could turn off notifications completely if we send too often.</span> </p> 
+   <h4 class="calibre44"> <span class="calibre3">Retry mechanism</span> </h4> 
+   <p class="calibre4"> <span class="calibre5">When a third-party service fails to send a notification, the notification will be added to the message queue for retrying. If the problem persists, an alert will be sent out to developers.</span> </p> 
+   <h4 class="calibre44"> <span class="calibre3">Security in push notifications</span> </h4> 
+   <p class="calibre4"> <span class="calibre5">For iOS or Android apps, appKey and appSecret are used to secure push notification APIs [6]. Only authenticated or verified clients are allowed to send push notifications using our APIs. Interested users should refer to the reference material [6].</span> </p> 
+   <h4 class="calibre44"> <span class="calibre3">Monitor queued notifications</span> </h4> 
+   <p class="calibre4"> <span class="calibre32">A key metric to monitor is the total number of queued notifications. If the number is large, the notification events are not processed fast enough by workers. To avoid delay in the notification delivery, more workers are needed. Figure 10-12 (credit to [7]) shows an example of queued messages to be processed. </span> </p> 
+   <p class="calibre4"> <span class="calibre5"> </span> </p> 
+   <p class="calibre15"> <img src="../images/00135.jpeg" alt="" class="calibre130"/> </p> 
+   <p class="calibre15"> <span class="calibre5">Figure 10-12</span> </p> 
+   <h4 class="calibre44"> <span class="calibre3">Events tracking</span> </h4> 
+   <p class="calibre4"> <span class="calibre5">Notification metrics, such as open rate, click rate, and engagement are important in understanding customer behaviors. Analytics service implements events tracking. Integration between the notification system and the analytics service is usually required. Figure 10-13 shows an example of events that might be tracked for analytics purposes.</span> </p> 
+   <p class="calibre15"> <img src="../images/00136.jpeg" alt="A close up of a necklace  Description automatically generated" class="calibre34"/> </p> 
+   <h3 class="calibre20"> <a id="_1kahyik8tqu1"></a><span class="calibre3">Updated design</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">Putting everything together, Figure 10-14 shows the updated notification system design. </span> </p> 
+   <p class="calibre15"> <img src="../images/00137.jpeg" alt="A close up of a map  Description automatically generated" class="calibre16"/> </p> 
+   <p class="calibre6"> <span class="calibre5">In this design, many new components are added in comparison with the previous design. </span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">The notification servers are equipped with two more critical features: authentication and rate-limiting. </span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">We also add a retry mechanism to handle notification failures. If the system fails to send notifications, they are put back in the messaging queue and the workers will retry for a predefined number of times. </span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Furthermore, notification templates provide a consistent and efficient notification creation process. </span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Finally, monitoring and tracking systems are added for system health checks and future improvements. </span><a id="_p6yzmeosr3i6"></a><a id="_muxv4j3sq7z9"><span class="calibre131"></span></a> </p> 
+   </div>
+ </body></html>

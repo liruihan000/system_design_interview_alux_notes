@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css"/>
+    <meta name="generator" content="Amazon.com"/>
+    <title>Unknown</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link rel="stylesheet" type="text/css" href="../stylesheet.css"/>
+<link rel="stylesheet" type="text/css" href="../page_styles.css"/>
+</head>
+  <body class="calibre">
+<div class="calibre1">
+<h2 class="calibre14" id="calibre_pb_1"> <a id="_jxl8gewt4hc"></a><span class="calibre3">Step 1 - Understand the problem and establish design scope</span> </h2> 
+   <p class="calibre4"> <span class="calibre5">Rate limiting can be implemented using different algorithms, each with its pros and cons. The interactions between an interviewer and a candidate help to clarify the type of rate limiters we are trying to build.</span> </p> 
+   <p class="calibre41"> <span class="calibre3">Candidate</span><span class="calibre5">:</span><span class="calibre3"> </span><span class="calibre5">What kind of rate limiter are we going to design? Is it a client-side rate limiter or server-side API rate limiter?</span> </p> 
+   <p class="calibre4"> <span class="calibre3">Interviewer</span><span class="calibre5">: Great question. We focus on the server-side API rate limiter.</span> </p> 
+   <p class="calibre41"> <span class="calibre3">Candidate</span><span class="calibre5">:</span><span class="calibre3"> </span><span class="calibre5">Does the rate limiter throttle API requests based on IP, the user ID, or other properties?</span> </p> 
+   <p class="calibre4"> <span class="calibre3">Interviewer</span><span class="calibre5">: The rate limiter should be flexible enough to support different sets of throttle rules.</span> </p> 
+   <p class="calibre41"> <span class="calibre3">Candidate</span><span class="calibre5">:</span><span class="calibre3"> </span><span class="calibre5">What is the scale of the system? Is it built for a startup or a big company with a large user base? </span> </p> 
+   <p class="calibre4"> <span class="calibre3">Interviewer</span><span class="calibre5">: The system must be able to handle a large number of requests.</span> </p> 
+   <p class="calibre41"> <span class="calibre3">Candidate</span><span class="calibre5">:</span><span class="calibre3"> </span><span class="calibre5">Will the system work in a distributed environment?</span> </p> 
+   <p class="calibre4"> <span class="calibre3">Interviewer</span><span class="calibre5">: Yes.</span> </p> 
+   <p class="calibre41"> <span class="calibre3">Candidate</span><span class="calibre5">:</span><span class="calibre3"> </span><span class="calibre5">Is the rate limiter a separate service or should it be implemented in application code?</span> </p> 
+   <p class="calibre4"> <span class="calibre3">Interviewer</span><span class="calibre5">: It is a design decision up to you.</span> </p> 
+   <p class="calibre41"> <span class="calibre3">Candidate</span><span class="calibre5">:</span><span class="calibre3"> </span><span class="calibre5">Do we need to inform users who are throttled?</span> </p> 
+   <p class="calibre4"> <span class="calibre3">Interviewer</span><span class="calibre5">: Yes.</span> </p> 
+   <p class="calibre6"> <span class="calibre3">Requirements</span> </p> 
+   <p class="calibre6"> <span class="calibre5">Here is a summary of the requirements for the system:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Accurately limit excessive requests.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Low latency. The rate limiter should not slow down HTTP response time.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Use as little memory as possible.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Distributed rate limiting. The rate limiter can be shared across multiple servers or processes. </span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Exception handling. Show clear exceptions to users when their requests are throttled.</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">High fault tolerance. If there are any problems with the rate limiter (for example, a cache server goes offline), it does not affect the entire system.</span> </p> 
+   </div>
+ </body></html>

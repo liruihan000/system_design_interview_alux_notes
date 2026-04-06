@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css"/>
+    <meta name="generator" content="Amazon.com"/>
+    <title>Unknown</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link rel="stylesheet" type="text/css" href="../stylesheet.css"/>
+<link rel="stylesheet" type="text/css" href="../page_styles.css"/>
+</head>
+  <body class="calibre">
+<div class="calibre1">
+<h2 class="calibre14" id="calibre_pb_4"> <a id="_pdjvegt8b6dx"></a><span class="calibre3">Step 4 - Wrap up</span> </h2> 
+   <p class="calibre4"> <span class="calibre5">After you finish the deep dive, your interviewer might ask you some follow up questions. </span> </p> 
+   <p class="calibre6"> <span class="calibre3">Interviewer: How do you extend your design to support multiple languages? </span> </p> 
+   <p class="calibre4"> <span class="calibre5">To support other non-English queries, we store Unicode characters in trie nodes. If you are not familiar with Unicode, here is the definition: “an encoding standard covers all the characters for all the writing systems of the world, modern and ancient” [5].</span> </p> 
+   <p class="calibre6"> <span class="calibre3">Interviewer: What if top search queries in one country are different from others?</span> </p> 
+   <p class="calibre4"> <span class="calibre5">In this case, we might build different tries for different countries. To improve the response time, we can store tries in CDNs.</span> </p> 
+   <p class="calibre6"> <span class="calibre3">Interviewer: How can we support the trending (real-time) search queries?</span> </p> 
+   <p class="calibre6"> <span class="calibre5">Assuming a news event breaks out, a search query suddenly becomes popular. Our original design will not work because:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Offline workers are not scheduled to update the trie yet because this is scheduled to run on weekly basis.</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Even if it is scheduled, it takes too long to build the trie. </span> </p> 
+   <p class="calibre6"> <span class="calibre5">Building a real-time search autocomplete is complicated and is beyond the scope of this book so we will only give a few ideas:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Reduce the working data set by sharding.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Change the ranking model and assign more weight to recent search queries.</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Data may come as streams, so we do not have access to all the data at once. Streaming data means data is generated continuously. Stream processing requires a different set of systems: Apache Hadoop MapReduce [6], Apache Spark Streaming [7], Apache Storm [8], Apache Kafka [9], etc. Because all those topics require specific domain knowledge, we are not going into detail here.</span> </p> 
+   <p class="calibre4"> <span class="calibre5">Congratulations on getting this far! Now give yourself a pat on the back. Good job!</span> </p> 
+   <p class="calibre4"> </p>
+  </div>
+ </body></html>

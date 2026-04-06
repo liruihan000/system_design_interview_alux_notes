@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css"/>
+    <meta name="generator" content="Amazon.com"/>
+    <title>Unknown</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link rel="stylesheet" type="text/css" href="../stylesheet.css"/>
+<link rel="stylesheet" type="text/css" href="../page_styles.css"/>
+</head>
+  <body class="calibre">
+<div class="calibre1">
+<h2 class="calibre14" id="calibre_pb_4"> <span class="calibre3">Example: Estimate Twitter QPS and storage requirements</span> </h2> 
+   <p class="calibre4"> <span class="calibre5">Please note the following numbers are for this exercise only as they are not real numbers from Twitter.</span> </p> 
+   <p class="calibre6"> <span class="calibre5">Assumptions:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5"> 300 million monthly active users.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5"> 50% of users use Twitter daily.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5"> Users post 2 tweets per day on average.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5"> 10% of tweets contain media.</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5"> Data is stored for 5 years.</span> </p> 
+   <p class="calibre6"> <span class="calibre5">Estimations:</span> </p> 
+   <p class="calibre6"> <span class="calibre5">Query per second (QPS) estimate:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5"> Daily active users (DAU) = 300 million * 50% = 150 million</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5"> Tweets QPS = 150 million * 2 tweets / 24 hour / 3600 seconds = ~3500 </span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5"> Peak QPS = 2 * QPS = ~7000</span> </p> 
+   <p class="calibre6"> <span class="calibre5">We will only estimate media storage here.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5"> Average tweet size:</span> </p> 
+   <p class="calibre29"> <span class="calibre10">•</span><span class="calibre5"> tweet_id   64 bytes </span> </p> 
+   <p class="calibre29"> <span class="calibre10">•</span><span class="calibre5"> text           140 bytes</span> </p> 
+   <p class="calibre29"> <span class="calibre10">•</span><span class="calibre5"> media       1 MB</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5"> Media storage: 150 million * 2 * 10% * 1 MB = 30 TB per day</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5"> 5-year media storage: 30 TB * 365 * 5 = ~55 PB</span> </p> 
+   </div>
+ </body></html>

@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css"/>
+    <meta name="generator" content="Amazon.com"/>
+    <title>Unknown</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link rel="stylesheet" type="text/css" href="../stylesheet.css"/>
+<link rel="stylesheet" type="text/css" href="../page_styles.css"/>
+</head>
+  <body class="calibre">
+<div class="calibre1">
+<h2 class="calibre14" id="calibre_pb_3"> <span class="calibre3">Step 3 - Design deep dive</span> </h2> 
+   <p class="calibre4"> <span class="calibre5">Up until now, we have discussed the high</span><span class="calibre51">-</span><span class="calibre5">level design of URL shortening and URL redirecting. In this section, we dive deep into the following: data model, hash function, URL shortening and URL redirecting. </span> </p> 
+   <h3 class="calibre20"> <a id="_279ka65"></a><span class="calibre3">Data model</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">In the high-level design, everything is stored in a hash table. This is a good starting point; however, this approach is not feasible for real-world systems as memory resources are limited and expensive. A better option is to store </span><span class="calibre18">&lt;shortURL, longURL&gt;</span><span class="calibre5"> mapping in a relational database. Figure 8-4 shows a simple database table design. The simplified version of the table contains 3 columns: </span><span class="calibre18">id</span><span class="calibre5">, </span><span class="calibre18">shortURL, longURL</span><span class="calibre5">. </span> </p> 
+   <p class="calibre15"> <img src="../images/00102.jpeg" alt="A screenshot of a cell phone  Description automatically generated" class="calibre98"/> </p> 
+   <h3 class="calibre20"> <a id="_54g15qwj07as"></a><span class="calibre3">Hash function</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">Hash function is used to hash a long URL to a short URL, also known as </span><span class="calibre18">hashValue</span><span class="calibre5">. </span> </p> 
+   <h4 class="calibre44"> <span class="calibre3">Hash value length</span> </h4> 
+   <p class="calibre4"> <span class="calibre5">The </span><span class="calibre18">hashValue</span><span class="calibre5"> consists of characters from [0-9, a-z, A-Z], containing 10 + 26 + 26 = 62 possible characters. To figure out the length of </span><span class="calibre18">hashValue</span><span class="calibre5">, find the smallest </span><span class="calibre18">n</span><span class="calibre5"> such that </span><span class="calibre18">62^n ≥ 365 billion</span><span class="calibre5">. The system must support up to 365 billion URLs based on the back of the envelope estimation. Table 8-1 shows the length of </span><span class="calibre18">hashValue</span><span class="calibre5"> and the corresponding maximal number of URLs it can support.</span> </p> 
+   <p class="calibre15"> <img src="../images/00103.jpeg" alt="A screenshot of a cell phone  Description automatically generated" class="calibre16"/> </p> 
+   <p class="calibre4"> <span class="calibre5">When </span><span class="calibre18">n = 7, 62 ^ n = ~3.5 trillion</span><span class="calibre5">, 3.5 trillion is more than enough to hold 365 billion URLs, so the length of </span><span class="calibre18">hashValue</span><span class="calibre5"> is 7.</span> </p> 
+   <p class="calibre4"> <span class="calibre5">We will explore two types of hash functions for a URL shortener. The first one is “hash + collision resolution”, and the second one is “base 62 conversion.” Let us look at them one by one.</span> </p> 
+   <h4 class="calibre44"> <span class="calibre3">Hash + collision resolution</span> </h4> 
+   <p class="calibre4"> <span class="calibre5">To shorten a long URL, we should implement a hash function that hashes a long URL to a 7-character string. A straightforward solution is to use well-known hash functions like CRC32, MD5, or SHA-1. The following table compares the hash results after applying different hash functions on this URL: https://en.wikipedia.org/wiki/Systems_design.</span> </p> 
+   <p class="calibre15"> <img src="../images/00104.jpeg" alt="A screenshot of a cell phone  Description automatically generated" class="calibre99"/> </p> 
+   <p class="calibre4"> <span class="calibre5">As shown in Table 8-2, even the shortest hash value (from CRC32) is too long (more than 7 characters). How can we make it shorter?</span> </p> 
+   <p class="calibre4"> <span class="calibre5">The first approach is to collect the first 7 characters of a hash value; however, this method can lead to hash collisions. To resolve hash collisions, we can recursively append a new predefined string until no more collision is discovered. This process is explained in Figure 8-5.</span> </p> 
+   <p class="calibre15"> <img src="../images/00105.jpeg" alt="A close up of a map  Description automatically generated" class="calibre16"/> </p> 
+   <p class="calibre4"> <span class="calibre5">This method can eliminate collision; however, it is expensive to query the database to check if a shortURL exists for every request. A technique called bloom filters [2] can improve performance. A bloom filter is a space-efficient probabilistic technique to test if an element is a member of a set. Refer to the reference material [2] for more details.</span> </p> 
+   <h4 class="calibre44"> <span class="calibre3">Base 62 conversion</span> </h4> 
+   <p class="calibre6"> <span class="calibre5">Base conversion is another approach commonly used for URL shorteners. Base conversion helps to convert the same number between its different number representation systems. Base 62 conversion is used as there are 62 possible characters for </span><span class="calibre18">hashValue</span><span class="calibre5">. Let us use an example to explain how the conversion works: convert 11157</span><span class="calibre100">10</span><span class="calibre5"> </span><span class="calibre5">to base 62 representation (11157</span><span class="calibre100">10</span><span class="calibre5"> </span><span class="calibre5">represents 11157 in a base 10 system).</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">From its name, base 62 is a way of using 62 characters for encoding. The mappings are: </span><span class="calibre18">0-0, ..., 9-9, 10-a, 11-b, ..., 35-z, 36-A, ..., 61-Z, where</span><span class="calibre5"> ‘a’ stands for 10, ‘Z’ stands for 61, etc.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">11157</span><span class="calibre100">10</span><span class="calibre5"> </span><span class="calibre5">= 2 x 62</span><span class="calibre101">2</span><span class="calibre5"> + 55 x 62</span><span class="calibre101">1 </span><span class="calibre5">+ 59 x 62</span><span class="calibre101">0</span><span class="calibre5"> = [2, 55, 59] -&gt; [2, T, X] in base 62 representation. Figure 8-6 shows the conversation process.</span> </p> 
+   <p class="calibre15"> <img src="../images/00106.jpeg" alt="A close up of text on a white background  Description automatically generated" class="calibre102"/> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Thus, the short URL is https://tinyurl.com /</span><span class="calibre3">2TX</span> </p> 
+   <h4 class="calibre44"> <span class="calibre3">Comparison of the two approaches </span> </h4> 
+   <p class="calibre4"> <span class="calibre5">Table 8-3 shows the differences of the two approaches.</span> </p> 
+   <p class="calibre15"> <img src="../images/00107.jpeg" alt="A screenshot of a cell phone  Description automatically generated" class="calibre16"/> </p> 
+   <h3 class="calibre20"> <span class="calibre3">URL shortening deep dive </span> </h3> 
+   <p class="calibre4"> <span class="calibre5">As one of the core pieces of the system, we want the URL shortening flow to be logically simple and functional. Base 62 conversion is used in our design. We build the following diagram (Figure 8-7) to demonstrate the flow.   </span> </p> 
+   <p class="calibre15"> <img src="../images/00108.jpeg" alt="A close up of a map  Description automatically generated" class="calibre103"/> </p> 
+   <p class="calibre9"> <span class="calibre5">1. longURL is the input.</span> </p> 
+   <p class="calibre9"> <span class="calibre5">2. The system checks if the longURL is in the database.</span> </p> 
+   <p class="calibre9"> <span class="calibre5">3. If it is, it means the longURL was converted to shortURL before. In this case, fetch the shortURL from the database and return it to the client.</span> </p> 
+   <p class="calibre9"> <span class="calibre5">4. If not, the longURL is new. A new unique ID (primary key) Is generated by the unique ID generator. </span> </p> 
+   <p class="calibre9"> <span class="calibre5">5. Convert the ID to shortURL with base 62 conversion.</span> </p> 
+   <p class="calibre9"> <span class="calibre5">6. Create a new database row with the ID, shortURL, and longURL.</span> </p> 
+   <p class="calibre4"> <a id="_zu0gcz"></a><span class="calibre5">To make the flow easier to understand, let us look at a concrete example.</span> </p> 
+   <p class="calibre9"> <a id="_o069b81i8hmr"></a><span class="calibre10">•</span><span class="calibre5">Assuming the input longURL is: https://en.wikipedia.org/wiki/Systems_design</span> </p> 
+   <p class="calibre9"> <a id="_hcxq00ie6mjc"></a><span class="calibre10">•</span><span class="calibre5">Unique ID generator returns ID: 2009215674938.</span> </p> 
+   <p class="calibre9"> <a id="_pha52kvo2f4n"></a><span class="calibre10">•</span><span class="calibre5">Convert the ID to shortURL using the base 62 conversion. ID (2009215674938) is converted to “zn9edcu”.</span> </p> 
+   <p class="calibre17"> <a id="_95w5u0rtkv4k"></a><span class="calibre10">•</span><span class="calibre5">Save ID, shortURL, and longURL to the database as shown in Table 8-4.</span> </p> 
+   <p class="calibre15"> <img src="../images/00109.jpeg" alt="A screenshot of a cell phone  Description automatically generated" class="calibre16"/> </p> 
+   <p class="calibre4"> <span class="calibre5">The distributed unique ID generator is worth mentioning. Its primary function is to generate globally unique IDs, which are used for creating shortURLs. In a highly distributed environment, implementing a unique ID generator is challenging. Luckily, we have already discussed a few solutions in “Chapter 7: Design A Unique ID Generator in Distributed Systems”. You can refer back to it to refresh your memory.</span><a id="_4iylrwe"></a> </p> 
+   <h3 class="calibre20"> <a id="_qjczeg2zs84p"></a><span class="calibre3">URL redirecting deep dive</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">Figure 8-8 shows the detailed design of the URL redirecting. As there are more reads than writes, </span><span class="calibre18">&lt;shortURL, longURL&gt; </span><span class="calibre5">mapping is stored in a cache to improve performance.</span> </p> 
+   <p class="calibre15"> <img src="../images/00110.jpeg" alt="A screenshot of a cell phone  Description automatically generated" class="calibre16"/> </p> 
+   <p class="calibre6"> <span class="calibre5">The flow of URL redirecting is summarized as follows:</span> </p> 
+   <p class="calibre9"> <span class="calibre5">1. A user clicks a short URL link: https://tinyurl.com/zn9edcu</span> </p> 
+   <p class="calibre9"> <span class="calibre5">2. The load balancer forwards the request to web servers.</span> </p> 
+   <p class="calibre9"> <span class="calibre5">3. If a shortURL is already in the cache, return the longURL directly.</span> </p> 
+   <p class="calibre9"> <span class="calibre5">4. If a shortURL is not in the cache, fetch the longURL from the database. If it is not in the database, it is likely a user entered an invalid shortURL.</span> </p> 
+   <p class="calibre17"> <span class="calibre5">5. The longURL is returned to the user.</span><a id="_tsy3p8styvp3"></a> </p> 
+   </div>
+ </body></html>

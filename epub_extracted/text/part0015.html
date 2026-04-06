@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css"/>
+    <meta name="generator" content="Amazon.com"/>
+    <title>Unknown</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link rel="stylesheet" type="text/css" href="../stylesheet.css"/>
+<link rel="stylesheet" type="text/css" href="../page_styles.css"/>
+</head>
+  <body class="calibre">
+  <div class="calibre1"> 
+   <h3 class="calibre20"> <span class="calibre3">Consistency</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">Since data is replicated at multiple nodes, it must be synchronized across replicas. Quorum consensus can guarantee consistency for both read and write operations. Let us establish a few definitions first.</span> </p> 
+   <p class="calibre4"> <span class="calibre82">N</span><span class="calibre5"> =</span><span class="calibre5"> The number of replicas</span> </p> 
+   <p class="calibre4"> <span class="calibre82">W</span><span class="calibre5"> = A write quorum of size </span><span class="calibre18">W</span><span class="calibre5">. For a write operation to be considered as successful, write operation must be acknowledged from </span><span class="calibre18">W</span><span class="calibre5"> replicas.</span> </p> 
+   <p class="calibre4"> <span class="calibre82">R</span><span class="calibre5"> = A read quorum of size </span><span class="calibre18">R</span><span class="calibre5">. For a read operation to be considered as successful, read operation must wait for responses from at least </span><span class="calibre18">R </span><span class="calibre5">replicas.</span> </p> 
+   <p class="calibre4"> <span class="calibre5">Consider the following example shown in Figure 6-6 with </span><span class="calibre18">N = 3</span><span class="calibre5">.</span> </p> 
+   <p class="calibre15"> <a id="_2nusc19"></a><img src="../images/00075.jpeg" alt="A close up of a logo  Description automatically generated" class="calibre45"/> </p> 
+   <p class="calibre4"> <span class="calibre18">W = 1</span><span class="calibre5"> does not mean data is written on one server. For instance, with the configuration in Figure 6-6, data is replicated at </span><span class="calibre18">s0</span><span class="calibre5">, </span><span class="calibre18">s1,</span><span class="calibre5"> and </span><span class="calibre18">s2</span><span class="calibre5">. </span><span class="calibre18">W = 1</span><span class="calibre5"> means that the coordinator must receive at least one acknowledgment before the write operation is considered as successful. For instance, if we get an acknowledgment from </span><span class="calibre18">s1</span><span class="calibre5">, we no longer need to wait for acknowledgements from </span><span class="calibre18">s0</span><span class="calibre5"> and </span><span class="calibre18">s2</span><span class="calibre5">. A coordinator acts as a proxy between the client and the nodes.</span> </p> 
+   <p class="calibre4"> <span class="calibre5">The configuration of </span><span class="calibre18">W, R</span><span class="calibre5"> and </span><span class="calibre18">N</span><span class="calibre5"> is a typical tradeoff between latency and consistency. If </span><span class="calibre18">W = 1</span><span class="calibre5"> or </span><span class="calibre18">R = 1</span><span class="calibre5">, an operation is returned quickly because a coordinator only needs to wait for a response from any of the replicas. If </span><span class="calibre18">W</span><span class="calibre5"> or </span><span class="calibre18">R &gt; 1</span><span class="calibre5">, the system offers better consistency; however, the query will be slower because the coordinator must wait for the response from the slowest replica.</span> </p> 
+   <p class="calibre4"> <span class="calibre5">If </span><span class="calibre18">W + R &gt; N</span><span class="calibre5">, strong consistency is guaranteed because there must be at least one overlapping node that has the latest data to ensure consistency. </span> </p> 
+   <p class="calibre4"> <span class="calibre5">How to configure </span><span class="calibre18">N, W</span><span class="calibre5">, and </span><span class="calibre18">R </span><span class="calibre5">to fit our use cases? Here are some of the possible setups: </span> </p> 
+   <p class="calibre4"> <span class="calibre5">If </span><span class="calibre18">R = 1</span><span class="calibre5"> and </span><span class="calibre18">W = N</span><span class="calibre5">, the system is optimized for a fast read. </span> </p> 
+   <p class="calibre4"> <span class="calibre5">If </span><span class="calibre18">W = 1 and R = N</span><span class="calibre5">, the system is optimized for fast write. </span> </p> 
+   <p class="calibre4"> <span class="calibre5">If </span><span class="calibre18">W + R &gt; N</span><span class="calibre5">, strong consistency is guaranteed (Usually </span><span class="calibre18">N = 3, W = R = 2</span><span class="calibre5">).</span> </p> 
+   <p class="calibre4"> <span class="calibre5">If </span><span class="calibre18">W + R &lt;= N</span><span class="calibre5">, strong consistency is not guaranteed.</span> </p> 
+   <p class="calibre4"> <span class="calibre5">Depending on the requirement, we can tune the values of </span><span class="calibre18">W, R, N</span><span class="calibre5"> to achieve the desired level of consistency.</span> </p> 
+   <h4 class="calibre44"> <span class="calibre3">Consistency models</span> </h4> 
+   <p class="calibre6"> <span class="calibre5">Consistency model is other important factor to consider when designing a key-value store. A consistency model defines the degree of data consistency, and a wide spectrum of possible consistency models exist:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Strong consistency: any read operation returns a value corresponding to the result of the most updated write data item. A client never sees out-of-date data. </span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Weak consistency: subsequent read operations may not see the most updated value.</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Eventual consistency: this is a specific form of weak consistency. Given enough time, all updates are propagated, and all replicas are consistent.</span> </p> 
+   <p class="calibre4"> <span class="calibre5">Strong consistency is usually achieved by forcing a replica not to accept new reads/writes until every replica has agreed on current write. This approach is not ideal for highly available systems because it could block new operations. Dynamo and Cassandra adopt eventual consistency, which is our recommended consistency model for our key-value store. From concurrent writes, eventual consistency allows inconsistent values to enter the system and force the client to read the values to reconcile. The next section explains how reconciliation works with versioning. </span> </p> 
+   <h4 class="calibre44"> </h4>
+  </div>
+ </body></html>

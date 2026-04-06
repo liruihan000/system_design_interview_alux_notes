@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css"/>
+    <meta name="generator" content="Amazon.com"/>
+    <title>Unknown</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link rel="stylesheet" type="text/css" href="../stylesheet.css"/>
+<link rel="stylesheet" type="text/css" href="../page_styles.css"/>
+</head>
+  <body class="calibre">
+<div class="calibre1">
+<h2 class="calibre14" id="calibre_pb_2"> <a id="_yg71alhn4ftn"></a><span class="calibre3">Step 2 - Propose high-level design and get buy-in</span> </h2> 
+   <p class="calibre6"> <span class="calibre5">This section shows the high-level design that supports various notification types: iOS push notification, Android push notification, SMS message, and Email. It is structured as follows:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Different types of notifications</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Contact info gathering flow</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Notification sending/receiving flow</span> </p> 
+   <h3 class="calibre20"> <a id="_5jw8vfnh4cu3"></a><span class="calibre3">Different types of notifications</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">We start by looking at how each notification type works at a high level.</span> </p> 
+   <h4 class="calibre44"> <span class="calibre3">iOS push notification</span> </h4> 
+   <p class="calibre15"> <img src="../images/00123.jpeg" alt="A picture containing object, mirror  Description automatically generated" class="calibre119"/> </p> 
+   <p class="calibre4"> <span class="calibre5">We primary need three components to send an iOS push notification:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Provider. A provider builds and sends notification requests to Apple Push Notification Service (APNS). To construct a push notification, the provider provides the following data:</span> </p> 
+   <p class="calibre29"> <span class="calibre10">•</span><span class="calibre5">Device token: This is a unique identifier used for sending push notifications.</span> </p> 
+   <p class="calibre29"> <span class="calibre10">•</span><span class="calibre5">Payload: This is a JSON dictionary that contains a notification’s payload. Here is an example: </span> </p> 
+   <p class="calibre120"> <img src="../images/00124.jpeg" alt="A picture containing bird  Description automatically generated" class="calibre121"/> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">APNS: This is a remote service provided by Apple to propagate push notifications to iOS devices.</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">iOS Device: It is the end client, which receives push notifications.</span> </p> 
+   <h4 class="calibre44"> <span class="calibre3">Android push notification</span> </h4> 
+   <p class="calibre4"> <span class="calibre5">Android adopts a similar notification flow. Instead of using APNs, Firebase Cloud Messaging (FCM) is commonly used to send push notifications to android devices.</span> </p> 
+   <p class="calibre15"> <img src="../images/00125.jpeg" alt="A picture containing umbrella  Description automatically generated" class="calibre122"/> </p> 
+   <h4 class="calibre44"> <span class="calibre3">SMS message</span> </h4> 
+   <p class="calibre4"> <span class="calibre5">For SMS messages, third party SMS services like Twilio [1], Nexmo [2], and many others are commonly used. Most of them are commercial services.  </span> </p> 
+   <p class="calibre15"> <img src="../images/00126.jpeg" alt="A picture containing clock  Description automatically generated" class="calibre123"/> </p> 
+   <h4 class="calibre44"> <span class="calibre3">Email</span> </h4> 
+   <p class="calibre4"> <span class="calibre5">Although companies can set up their own email servers, many of them opt for commercial email services. Sendgrid [3] and Mailchimp [4] are among the most popular email services, which offer a better delivery rate and data analytics.</span> </p> 
+   <p class="calibre15"> <img src="../images/00127.jpeg" alt="A picture containing table  Description automatically generated" class="calibre124"/> </p> 
+   <p class="calibre4"> <span class="calibre5">Figure 10-6 shows the design after including all the third-party services.</span> </p> 
+   <p class="calibre15"> <img src="../images/00128.jpeg" alt="A screenshot of a cell phone  Description automatically generated" class="calibre125"/> </p> 
+   <h3 class="calibre20"> <span class="calibre3">Contact info gathering flow</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">To send notifications, we need to gather mobile device tokens, phone numbers, or email addresses. As shown in Figure 10-7, when a user installs our app or signs up for the first time, API servers collect user contact info and store it in the database.  </span> </p> 
+   <p class="calibre15"> <img src="../images/00129.jpeg" alt="A picture containing clock  Description automatically generated" class="calibre16"/> </p> 
+   <p class="calibre4"> <span class="calibre5">Figure 10-8 shows simplified database tables to store contact info. Email addresses and phone numbers are stored in the </span><span class="calibre18">user </span><span class="calibre5">table, whereas device tokens are stored in the </span><span class="calibre18">device </span><span class="calibre5">table. A user can have multiple devices, indicating that a push notification can be sent to all the user devices.</span> </p> 
+   <p class="calibre15"> <img src="../images/00130.jpeg" alt="A screenshot of a cell phone  Description automatically generated" class="calibre16"/> </p> 
+   <h3 class="calibre20"> <a id="_7k44bf157510"></a><span class="calibre3">Notification sending/receiving flow</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">We will first present the initial design; then, propose some optimizations. </span> </p> 
+   <p class="calibre6"> <span class="calibre3">High</span><span class="calibre126">-</span><span class="calibre3">level design</span> </p> 
+   <p class="calibre4"> <span class="calibre5">Figure 10-9 shows the design, and each system component is explained below.</span> </p> 
+   <p class="calibre15"> <img src="../images/00131.jpeg" alt="A close up of a map  Description automatically generated" class="calibre16"/> </p> 
+   <p class="calibre4"> <span class="calibre3">Service 1 to N</span><span class="calibre5">: A service can be a micro-service, a cron job, or a distributed system that triggers notification sending events. For example, a billing service sends emails to remind customers of their due payment or a shopping website tells customers that their packages will be delivered tomorrow via SMS messages. </span> </p> 
+   <p class="calibre4"> <span class="calibre3">Notification system</span><span class="calibre5">: The notification system is the centerpiece of sending/receiving notifications. Starting with something simple, only one notification server is used. It provides APIs for services 1 to N, and builds notification payloads for third party services.   </span> </p> 
+   <p class="calibre4"> <span class="calibre3">Third-party services: </span><span class="calibre5">Third party services are responsible for delivering notifications to users. While integrating with third-party services, we need to pay extra attention to extensibility. Good extensibility means a flexible system that can easily plugging or unplugging of a third-party service. Another important consideration is that a third-party service might be unavailable in new markets or in the future. For instance, FCM is unavailable in China. Thus, alternative third-party services such as Jpush, PushY, etc are used there.</span> </p> 
+   <p class="calibre4"> <span class="calibre3">iOS, Android, SMS, Email</span><span class="calibre5">: Users receive notifications on their devices.</span> </p> 
+   <p class="calibre6"> <span class="calibre5">Three problems are identified in this design:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Single point of failure (SPOF): A single notification server means SPOF.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Hard to scale: The notification system handles everything related to push notifications in one server. It is challenging to scale databases, caches, and different notification processing components independently. </span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Performance bottleneck: Processing and sending notifications can be resource intensive. For example, constructing HTML pages and waiting for responses from third party services could take time. Handling everything in one system can result in the system overload, especially during peak hours.</span> </p> 
+   <p class="calibre6"> <span class="calibre3">High-level design (improved)</span> </p> 
+   <p class="calibre6"> <span class="calibre32">After enumerating challenges in the initial design, we improve the design as listed below:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Move the database and cache out of the notification server.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Add more notification servers and set up automatic horizontal scaling.</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Introduce message queues to decouple the system components.</span> </p> 
+   <p class="calibre4"> <span class="calibre5">Figure 10-10 shows the improved high-level design.</span> </p> 
+   <p class="calibre15"> <img src="../images/00132.jpeg" alt="A close up of a map  Description automatically generated" class="calibre127"/> </p> 
+   <p class="calibre4"> <span class="calibre5">The best way to go through the above diagram is from left to right:</span> </p> 
+   <p class="calibre4"> <span class="calibre3">Service 1 to N</span><span class="calibre5">: They represent different services that send notifications via APIs provided by notification servers. </span> </p> 
+   <p class="calibre6"> <span class="calibre3">Notification servers</span><span class="calibre5">: They provide the following functionalities:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Provide APIs for services to send notifications. Those APIs are only accessible internally or by verified clients to prevent spams.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Carry out basic validations to verify emails, phone numbers, etc.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Query the database or cache to fetch data needed to render a notification.</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Put notification data to message queues for parallel processing.</span> </p> 
+   <p class="calibre4"> <span class="calibre5">Here is an example of the API to send an email: </span> </p> 
+   <p class="calibre6"> <span class="calibre18">POST</span><span class="calibre18"> </span><span class="calibre18">https://api.example.com/v/sms/send</span><span class="calibre18"> </span> </p> 
+   <p class="calibre6"> <span class="calibre5">Request body</span> </p> 
+   <p class="calibre15"> <img src="../images/00133.jpeg" alt="A screenshot of text  Description automatically generated" class="calibre128"/> </p> 
+   <p class="calibre4"> <span class="calibre3">Cache</span><span class="calibre5">: User info, device info, notification templates are cached.</span> </p> 
+   <p class="calibre4"> <span class="calibre3">DB</span><span class="calibre5">: It stores data about user, notification, settings, etc.</span> </p> 
+   <p class="calibre4"> <span class="calibre3">Message queues</span><span class="calibre5">: They remove dependencies between components. Message queues serve as buffers when high volumes of notifications are to be sent out. Each notification type is assigned with a distinct message queue so an outage in one third-party service will not affect other notification types.</span> </p> 
+   <p class="calibre4"> <span class="calibre3">Workers</span><span class="calibre32">:</span><span class="calibre3"> </span><span class="calibre32">Workers are a list of servers that pull notification events from message queues and send them to the corresponding third-party services.</span> </p> 
+   <p class="calibre4"> <span class="calibre3">Third-party services</span><span class="calibre5">: Already explained in the initial design.</span> </p> 
+   <p class="calibre4"> <span class="calibre3">iOS, Android, SMS, Email</span><span class="calibre5">: Already explained in the initial design.</span> </p> 
+   <p class="calibre6"> <span class="calibre5">Next, let us examine how every component works together to send a notification:</span> </p> 
+   <p class="calibre9"> <span class="calibre5">1. A service calls APIs provided by notification servers to send notifications.</span> </p> 
+   <p class="calibre9"> <span class="calibre5">2. Notification servers fetch metadata such as user info, device token, and notification setting from the cache or database.</span> </p> 
+   <p class="calibre9"> <span class="calibre5">3. A notification event is sent to the corresponding queue for processing. For instance, an iOS push notification event is sent to the iOS PN queue.</span> </p> 
+   <p class="calibre9"> <span class="calibre5">4. Workers pull notification events from message queues.</span> </p> 
+   <p class="calibre9"> <span class="calibre5">5. Workers send notifications to third party services.</span> </p> 
+   <p class="calibre17"> <span class="calibre5">6. Third-party services send notifications to user devices.</span><a id="_o7v8zfiwh21e"></a> </p> 
+   </div>
+ </body></html>

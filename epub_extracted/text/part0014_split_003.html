@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css"/>
+    <meta name="generator" content="Amazon.com"/>
+    <title>Unknown</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link rel="stylesheet" type="text/css" href="../stylesheet.css"/>
+<link rel="stylesheet" type="text/css" href="../page_styles.css"/>
+</head>
+  <body class="calibre">
+<div class="calibre1">
+<h2 class="calibre14" id="calibre_pb_3"> <a id="_2w5ecyt"></a><span class="calibre3">Distributed key-value store</span> </h2> 
+   <p class="calibre4"> <span class="calibre5">A distributed key-value store is also called a distributed hash table, which distributes key-value pairs across many servers. When designing a distributed system, it is important to understand CAP (</span><span class="calibre3">C</span><span class="calibre5">onsistency, </span><span class="calibre3">A</span><span class="calibre5">vailability, </span><span class="calibre3">P</span><span class="calibre5">artition Tolerance) theorem. </span> </p> 
+   <h3 class="calibre20"> <a id="_1baon6m"></a><span class="calibre3">CAP theorem</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">CAP theorem states it is impossible for a distributed system to simultaneously provide more than two of these three guarantees: consistency, availability, and partition tolerance. Let us establish a few definitions. </span> </p> 
+   <p class="calibre4"> <span class="calibre3">Consistency</span><span class="calibre5">: consistency means all clients see the same data at the same time no matter which node they connect to.</span> </p> 
+   <p class="calibre4"> <span class="calibre3">Availability: </span><span class="calibre5">availability means any client which requests data gets a response even if some of the nodes are down.</span> </p> 
+   <p class="calibre4"> <span class="calibre3">Partition Tolerance: </span><span class="calibre5">a partition indicates a communication break between two nodes. Partition tolerance means the system continues to operate despite network partitions. </span> </p> 
+   <p class="calibre4"> <span class="calibre5">CAP theorem states that one of the three properties must be sacrificed to support 2 of the 3 properties as shown in Figure 6-1.</span> </p> 
+   <p class="calibre15"> <img src="../images/00070.jpeg" alt="A close up of a logo  Description automatically generated" class="calibre78"/> </p> 
+   <p class="calibre4"> <span class="calibre5">Nowadays, key-value stores are classified based on the two CAP characteristics they support: </span> </p> 
+   <p class="calibre4"> <span class="calibre3">CP (consistency and partition tolerance) systems</span><span class="calibre5">: a CP key-value store supports consistency and partition tolerance while sacrificing availability.</span> </p> 
+   <p class="calibre4"> <span class="calibre3">AP (availability and partition tolerance) systems</span><span class="calibre5">: an AP key-value store supports availability and partition tolerance while sacrificing consistency.</span> </p> 
+   <p class="calibre4"> <span class="calibre3">CA (consistency and availability) systems</span><span class="calibre5">: a CA key-value store supports consistency and availability while sacrificing partition tolerance. Since network failure is unavoidable, a distributed system must tolerate network partition. Thus, a CA system cannot exist in real-world applications.</span> </p> 
+   <p class="calibre4"> <span class="calibre5">What you read above is mostly the definition part. To make it easier to understand, let us take a look at some concrete examples. In distributed systems, data is usually replicated multiple times. Assume data are replicated on three replica nodes, </span><span class="calibre18">n1</span><span class="calibre5">, </span><span class="calibre18">n2</span><span class="calibre5"> and </span><span class="calibre18">n3</span><span class="calibre5"> as shown in Figure 6-2.</span> </p> 
+   <p class="calibre6"> <span class="calibre3">Ideal situation</span> </p> 
+   <p class="calibre4"> <span class="calibre5">In the ideal world, network partition never occurs. Data written to </span><span class="calibre18">n1</span><span class="calibre5"> is automatically replicated to </span><span class="calibre18">n2</span><span class="calibre5"> and </span><span class="calibre18">n3</span><span class="calibre5">. Both consistency and availability are achieved.</span> </p> 
+   <p class="calibre15"> <img src="../images/00071.jpeg" alt="" class="calibre79"/> </p> 
+   <p class="calibre6"> <span class="calibre3">Real-world distributed systems</span> </p> 
+   <p class="calibre4"> <span class="calibre5">In a distributed system, partitions cannot be avoided, and when a partition occurs, we must choose between consistency and availability. In Figure 6-3, </span><span class="calibre18">n3</span><span class="calibre5"> goes down and cannot communicate with </span><span class="calibre18">n1</span><span class="calibre5"> and </span><span class="calibre18">n2</span><span class="calibre5">. If clients write data to </span><span class="calibre18">n1</span><span class="calibre5"> or </span><span class="calibre18">n2</span><span class="calibre5">, data cannot be propagated to n3. If data is written to </span><span class="calibre18">n3</span><span class="calibre5"> but not propagated to </span><span class="calibre18">n1</span><span class="calibre5"> and </span><span class="calibre18">n2</span><span class="calibre5"> yet, </span><span class="calibre18">n1</span><span class="calibre5"> and </span><span class="calibre18">n2</span><span class="calibre5"> would have stale data.</span> </p> 
+   <p class="calibre15"> <img src="../images/00072.jpeg" alt="A close up of a logo  Description automatically generated" class="calibre80"/> </p> 
+   <p class="calibre4"> <span class="calibre5">If we choose consistency over availability (CP system), we must block all write operations to </span><span class="calibre18">n1</span><span class="calibre5"> and </span><span class="calibre18">n2</span><span class="calibre5"> to avoid data inconsistency among these three servers, which makes the system unavailable. Bank systems usually have extremely high consistent requirements. For example, it is crucial for a bank system to display the most up-to-date balance info. If inconsistency occurs due to a network partition, the bank system returns an error before the inconsistency is resolved.</span> </p> 
+   <p class="calibre4"> <span class="calibre5">However, if we choose availability over consistency (AP system), the system keeps accepting reads, even though it might return stale data. For writes, </span><span class="calibre18">n1</span><span class="calibre5"> and </span><span class="calibre18">n2</span><span class="calibre5"> will keep accepting writes, and data will be synced to </span><span class="calibre18">n3</span><span class="calibre5"> when the network partition is resolved. </span> </p> 
+   <p class="calibre4"> <span class="calibre5">Choosing the right CAP guarantees that fit your use case is an important step in building a distributed key-value store. You can discuss this with your interviewer and design the system accordingly.</span> </p> 
+   <h3 class="calibre20"> <a id="_3zrb69vnvstb"></a><span class="calibre3">System components</span> </h3> 
+   <p class="calibre6"> <span class="calibre5">In this section, we will discuss the following core components and techniques used to build a key-value store:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Data partition</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Data replication</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Consistency</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Inconsistency resolution</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Handling failures</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">System architecture diagram</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Write path</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Read path</span> </p> 
+   <p class="calibre4"> <span class="calibre5">The content below is largely based on three popular key-value store systems: Dynamo [4], Cassandra [5], and BigTable [6].</span> </p> 
+   <h3 class="calibre20"> <span class="calibre3">Data partition</span> </h3> 
+   <p class="calibre6"> <span class="calibre5">For large applications, it is infeasible to fit the complete data set in a single server. The simplest way to accomplish this is to split the data into smaller partitions and store them in multiple servers. There are two challenges while partitioning the data:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Distribute data across multiple servers evenly. </span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Minimize data movement when nodes are added or removed.</span> </p> 
+   <p class="calibre6"> <span class="calibre5">Consistent hashing discussed in Chapter 5 is a great technique to solve these problems. Let us revisit how consistent hashing works at a high-level. </span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">First, servers are placed on a hash ring. In Figure 6-4, eight servers, represented by </span><span class="calibre18">s0, s1, …, s7</span><span class="calibre5">, are placed on the hash ring. </span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Next, a key is hashed onto the same ring, and it is stored on the first server encountered while moving in the clockwise direction. For instance, </span><span class="calibre18">key0</span><span class="calibre5"> is stored in </span><span class="calibre18">s1</span><span class="calibre5"> using this logic. </span> </p> 
+   <p class="calibre15"> <img src="../images/00073.jpeg" alt="A necklace with a piece of paper  Description automatically generated" class="calibre47"/> </p> 
+   <p class="calibre4"> <a id="_1opuj5n"></a><span class="calibre5">Using consistent hashing to partition data has the following advantages:</span> </p> 
+   <p class="calibre4"> <span class="calibre3">Automatic scaling: </span><span class="calibre5">servers could be added and removed automatically depending on the load. </span> </p> 
+   <p class="calibre4"> <span class="calibre3">Heterogeneity:</span><span class="calibre5"> the number of virtual nodes for a server is proportional to the server capacity. For example, servers with higher capacity are assigned with more virtual nodes. </span> </p> 
+   <h3 class="calibre20"> <span class="calibre3">Data replication</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">To achieve high availability and reliability, data must be replicated asynchronously over </span><span class="calibre18">N </span><span class="calibre5">servers, where </span><span class="calibre18">N</span><span class="calibre5"> is a configurable parameter. These </span><span class="calibre18">N </span><span class="calibre5">servers are chosen using the following logic: after a key is mapped to a position on the hash ring, walk clockwise from that position and choose the first </span><span class="calibre18">N</span><span class="calibre5"> servers on the ring to store data copies. In Figure 6-5 (</span><span class="calibre18">N = 3</span><span class="calibre5">), </span><span class="calibre18">key0</span><span class="calibre5"> is replicated at </span><span class="calibre18">s1, s2,</span><span class="calibre5"> and </span><span class="calibre18">s3</span><span class="calibre5">. </span> </p> 
+   <p class="calibre15"> <img src="../images/00074.jpeg" alt="A close up of a necklace  Description automatically generated" class="calibre81"/> </p> 
+   <p class="calibre4"> <a id="_48pi1tg"></a><span class="calibre5">With virtual nodes, the first </span><span class="calibre18">N</span><span class="calibre5"> nodes on the ring may be owned by fewer than </span><span class="calibre18">N</span><span class="calibre5"> physical servers. To avoid this issue, we only choose unique servers while performing the clockwise walk logic.</span> </p> 
+   <p class="calibre4"> <span class="calibre5">Nodes in the same data center often fail at the same time due to power outages, network issues, natural disasters, etc. For better reliability, replicas are placed in distinct data centers, and data centers are connected through high-speed networks. </span> </p> 
+   <h4 class="calibre44"> </h4>
+  </div>
+ </body></html>

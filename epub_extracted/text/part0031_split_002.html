@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css"/>
+    <meta name="generator" content="Amazon.com"/>
+    <title>Unknown</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link rel="stylesheet" type="text/css" href="../stylesheet.css"/>
+<link rel="stylesheet" type="text/css" href="../page_styles.css"/>
+</head>
+  <body class="calibre">
+<div class="calibre1">
+<h2 class="calibre14" id="calibre_pb_2"> <a id="_hvgs8ne87v2o"></a><span class="calibre3">Step 2 - Propose high-level design and get buy-in</span> </h2> 
+   <p class="calibre6"> <span class="calibre5">At the high-level, the system is broken down into two:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Data gathering service: It gathers user input queries and aggregates them in real-time. Real-time processing is not practical for large data sets; however, it is a good starting point. We will explore a more realistic solution in deep dive.  </span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Query service: Given a search query or prefix, return 5 most frequently searched terms. </span> </p> 
+   <h3 class="calibre20"> <a id="_n5lkufepze0c"></a><span class="calibre3">Data gathering service</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">Let us use a simplified example to see how data gathering service works. Assume we have a frequency table that stores the query string and its frequency as shown in Figure 13-2. In the beginning, the frequency table is empty. Later, users enter queries “twitch”, “twitter”, “twitter,” and “twillo” sequentially. Figure 13-2 shows how the frequency table is updated. </span> </p> 
+   <p class="calibre15"> <img src="../images/00166.jpeg" alt="A screenshot of a cell phone  Description automatically generated" class="calibre16"/> </p> 
+   <h3 class="calibre20"> <a id="_u8gczpk8clo8"></a><span class="calibre3">Query service</span> </h3> 
+   <p class="calibre6"> <span class="calibre5">Assume we have a frequency table as shown in Table 13-1. It has two fields.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Query: it stores the query string.</span> </p> 
+   <p class="calibre17"> <span class="calibre10">•</span><span class="calibre5">Frequency: it represents the number of times a query has been searched.</span> </p> 
+   <p class="calibre15"> <img src="../images/00167.jpeg" alt="A screenshot of a cell phone  Description automatically generated" class="calibre16"/> </p> 
+   <p class="calibre4"> <span class="calibre5">When a user types “tw” in the search box, the following top 5 searched queries are displayed (Figure 13-3), assuming the frequency table is based on Table 13-1.  </span> </p> 
+   <p class="calibre15"> <img src="../images/00168.jpeg" alt="A screenshot of a cell phone  Description automatically generated" class="calibre140"/> </p> 
+   <p class="calibre4"> <span class="calibre5">To get top 5 frequently searched queries, execute the following SQL query:</span> </p> 
+   <p class="calibre15"> <img src="../images/00169.jpeg" alt="A screenshot of a cell phone  Description automatically generated" class="calibre158"/> </p> 
+   <p class="calibre4"> <span class="calibre5">This is an acceptable solution when the data set is small. When it is large, accessing the database becomes a bottleneck. We will explore optimizations in deep dive.</span> </p> 
+   </div>
+ </body></html>

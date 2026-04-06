@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css"/>
+    <meta name="generator" content="Amazon.com"/>
+    <title>Unknown</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link rel="stylesheet" type="text/css" href="../stylesheet.css"/>
+<link rel="stylesheet" type="text/css" href="../page_styles.css"/>
+</head>
+  <body class="calibre">
+<div class="calibre1">
+<h2 class="calibre14" id="calibre_pb_4"> <span class="calibre3">Step 4 - Wrap up</span> </h2> 
+   <p class="calibre4"> <span class="calibre5">In this chapter, we presented a chat system architecture that supports both 1-to-1 chat and small group chat. WebSocket is used for real-time communication between the client and server. The chat system contains the following components: chat servers for real-time messaging, presence servers for managing online presence, push notification servers for sending push notifications, key-value stores for chat history persistence and API servers for other functionalities. </span> </p> 
+   <p class="calibre6"> <span class="calibre5">If you have extra time at the end of the interview, here are additional talking points:</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Extend the chat app to support media files such as photos and videos. Media files are significantly larger than text in size. Compression, cloud storage, and thumbnails are interesting topics to talk about.</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">End-to-end encryption. Whatsapp supports end-to-end encryption for messages. Only the sender and the recipient can read messages. Interested readers should refer to the article in the reference materials [9]. </span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Caching messages on the client-side is effective to reduce the data transfer between the client and server. </span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Improve load time. Slack built a geographically distributed network to cache users’ data, channels, etc. for better load time [10].</span> </p> 
+   <p class="calibre9"> <span class="calibre10">•</span><span class="calibre5">Error handling. </span> </p> 
+   <p class="calibre29"> <span class="calibre10">•</span><span class="calibre5">The chat server error. There might be hundreds of thousands, or even more persistent connections to a chat server. If a chat server goes offline, service discovery (Zookeeper) will provide a new chat server for clients to establish new connections with. </span> </p> 
+   <p class="calibre30"> <span class="calibre10">•</span><span class="calibre5">Message resent mechanism. Retry and queueing are common techniques for resending messages.</span> </p> 
+   <p class="calibre4"> <span class="calibre5">Congratulations on getting this far! Now give yourself a pat on the back. Good job!</span></p>
+  </div>
+ </body></html>

@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css"/>
+    <meta name="generator" content="Amazon.com"/>
+    <title>Unknown</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link rel="stylesheet" type="text/css" href="../stylesheet.css"/>
+<link rel="stylesheet" type="text/css" href="../page_styles.css"/>
+</head>
+  <body class="calibre">
+<div class="calibre1">
+<h2 class="calibre14" id="calibre_pb_8"> <a id="_49x2ik5"></a><span class="calibre3">Stateless web tier</span> </h2> 
+   <p class="calibre4"> <span class="calibre5">Now it is time to consider scaling the web tier horizontally.</span><span class="calibre31"> </span><span class="calibre5">For this, we need to move state (for instance user session data) out of the web tier. A good practice is to store session data in the persistent storage such as relational database or NoSQL. Each web server in the cluster can access state data from databases. This is called stateless web tier. </span> </p> 
+   <h3 class="calibre20"> <span class="calibre3">Stateful architecture</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">A stateful server and stateless server has some key differences. A stateful server remembers client data (state) from one request to the next. A stateless server keeps no state information.</span> </p> 
+   <p class="calibre4"> <span class="calibre5">Figure 1-12 shows an example of a stateful architecture.</span> </p> 
+   <p class="calibre15"> <img src="../images/00015.jpeg" alt="A screenshot of a cell phone  Description automatically generated" class="calibre16"/> </p> 
+   <p class="calibre4"> <a id="_2p2csry"></a><span class="calibre5">In Figure 1-12, user A’s session data and profile image are stored in Server 1. To authenticate User A, HTTP requests must be routed to Server 1. If a request is sent to other servers like Server 2, authentication would fail because Server 2 does not contain User A’s session data. Similarly, all HTTP requests from User B must be routed to Server 2; all requests from User C must be sent to Server 3. </span> </p> 
+   <p class="calibre4"> <span class="calibre5">The issue is that every request from the same client must be routed to the same server. This can be done with sticky sessions in most load balancers [10]; however, this adds the overhead. Adding or removing servers is much more difficult with this approach. It is also challenging to handle server failures. </span> </p> 
+   <h3 class="calibre20"> <span class="calibre3">Stateless architecture</span> </h3> 
+   <p class="calibre4"> <span class="calibre5">Figure 1-13 shows the stateless architecture.</span> </p> 
+   <p class="calibre15"> <img src="../images/00016.jpeg" alt="A close up of a map  Description automatically generated" class="calibre16"/> </p> 
+   <p class="calibre4"> <a id="_147n2zr"></a><span class="calibre32">In this stateless architecture, HTTP requests from users can be sent to any web servers, which fetch state data from a shared data store. State data is stored in a shared data store and kept out of web servers. A stateless system is simpler, more robust, and scalable.</span> </p> 
+   <p class="calibre4"> <span class="calibre5">Figure 1-14 shows the updated design with a stateless web tier.</span> </p> 
+   <p class="calibre15"> <img src="../images/00017.jpeg" alt="A close up of a map  Description automatically generated" class="calibre16"/> </p> 
+   <p class="calibre4"> <a id="_3o7alnk"></a><span class="calibre5">In Figure 1-14, we move the session data out of the web tier and store them in the persistent data store. The shared data store could be a relational database, Memcached/Redis, NoSQL, etc. The NoSQL data store is chosen as it is easy to scale. Autoscaling means adding or removing web servers automatically based on the traffic load. After the state data is removed out of web servers, auto-scaling of the web tier is easily achieved by adding or removing servers based on traffic load.</span> </p> 
+   <p class="calibre4"> <span class="calibre5">Your website grows rapidly and attracts a significant number of users internationally. To improve availability and provide a better user experience across wider geographical areas, supporting multiple data centers is crucial. </span> </p> 
+   </div>
+ </body></html>
